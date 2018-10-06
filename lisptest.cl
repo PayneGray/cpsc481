@@ -1,4 +1,4 @@
-; Payne Lacsamana, Chantalle Bril, Bobby Durgham
+; Payne Lacsamana, Chantalle Bril, Bobby Dergham
 
 ; Please use descriptive variable and function names
 ; Please use a hyphens (-) as separators in variable and function names
@@ -16,7 +16,8 @@
 
 
 ; ---------- FUNCTION DEFINITIONS ----------
-(setf board (make-array '(7 7)))
+
+;(setf board (make-array '(7 7)))  ; Bobby and I realized that there is no need for a board array if we use a closed list instead
 (setf move (make-array '(12 2) 
    :initial-contents '((0 -1) (0 1) (1 2) (-1 2) (1 -2) (-1 -2) (2 1) (-2 1) (2 -1) (-2 -1) (1 0) (-1 0)))
 )
