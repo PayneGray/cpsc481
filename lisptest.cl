@@ -18,17 +18,14 @@
 ; ---------- FUNCTION DEFINITIONS ----------
 
 (defun move-to (pos)
-"Moves to the position and updates the current position to the position"
+"Moves to the position and updates the current position to the position.
+ Position (pos) is a cons cell where x-coord = (car pos) and y-coord = (cdr pos)"
 (setq closed-list (append closed-list list(pos)))
 (setq current-pos pos)
 )
 
-(defun legal-move (pos)
-"Returns true if moving to the position is a legal move,
- Returns false if moving to the position is illegal.
- 
+; (setf board (make-array '(7 7)))  Bobby and I realized that there is no need for a board array if we use a closed list instead
 
-;(setf board (make-array '(7 7)))  ; Bobby and I realized that there is no need for a board array if we use a closed list instead
 (setf move (make-array '(12 2) 
    :initial-contents '((0 -1) (0 1) (1 2) (-1 2) (1 -2) (-1 -2) (2 1) (-2 1) (2 -1) (-2 -1) (1 0) (-1 0)))
 )
