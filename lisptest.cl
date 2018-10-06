@@ -8,6 +8,7 @@
 ; Current position is an (x,y) coordinate stored in a cons cell. It represents the current position of the giraffe on the board
 ;  - How to declare a cons cell: (setq position (cons x y))
 ;  - How to get x value from cons cell: (car position)
+;  - How to get y value from cons cell: (cdr position)
 (setq current-pos (cons 0 0))
 
 ; List of positions we have already visited. Positions are (x,y) coordinates stored in cons cells
