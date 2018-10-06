@@ -6,16 +6,26 @@
 
 ; ---------- GLOBAL VARIABLES ----------
 ; Current position is an (x,y) coordinate stored in a cons cell. It represents the current position of the giraffe on the board
+;  - How to declare a cons cell: (setq position (cons x y))
+;  - How to get x value from cons cell: (car position)
 (setq current-pos (cons 0 0))
 
 ; List of positions we have already visited. Positions are (x,y) coordinates stored in cons cells
 (setq closed-list '(list current-pos))
 
-; Test code
-(print closed-list)
-
 
 ; ---------- FUNCTION DEFINITIONS ----------
+
+(defun move-to (pos)
+"Moves to the position and updates the current position to the position"
+(setq closed-list (append closed-list list(pos)))
+(setq current-pos pos)
+)
+
+(defun legal-move (pos)
+"Returns true if moving to the position is a legal move,
+ Returns false if moving to the position is illegal.
+ 
 
 ;(setf board (make-array '(7 7)))  ; Bobby and I realized that there is no need for a board array if we use a closed list instead
 (setf move (make-array '(12 2) 
