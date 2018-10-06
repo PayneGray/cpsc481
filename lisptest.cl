@@ -1,3 +1,21 @@
+; Payne Lacsamana, Chantalle Bril, Bobby Durgham
+
+; Please use descriptive variable and function names
+; Please use a hyphens (-) as separators in variable and function names
+;  (e.g. make-array current-pos etc.)
+
+; ---------- GLOBAL VARIABLES ----------
+; Current position is an (x,y) coordinate stored in a cons cell. It represents the current position of the giraffe on the board
+(setq current-pos (cons 0 0))
+
+; List of positions we have already visited. Positions are (x,y) coordinates stored in cons cells
+(setq closed-list '(list current-pos))
+
+; Test code
+(print closed-list)
+
+
+; ---------- FUNCTION DEFINITIONS ----------
 (setf board (make-array '(7 7)))
 (setf move (make-array '(12 2) 
    :initial-contents '((0 -1) (0 1) (1 2) (-1 2) (1 -2) (-1 -2) (2 1) (-2 1) (2 -1) (-2 -1) (1 0) (-1 0)))
