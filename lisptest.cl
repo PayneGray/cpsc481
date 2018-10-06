@@ -24,11 +24,11 @@
 (setq current-pos pos)
 )
 
-(defun legal-move (pos)
+
 "Returns true if moving to the position is a legal move,
  Returns false if moving to the position is illegal."
- 
-)
+(defun legal-move (pos))
+
 ;(setf board (make-array '(7 7)))  ; Bobby and I realized that there is no need for a board array if we use a closed list instead
 (setf move (make-array '(12 2) 
    :initial-contents '((1 0) (0 1) (-1 0) (0 -1) (1 2) (-1 2) (1 -2) (-1 -2) (2 1) (-2 1) (2 -1) (-2 -1) ))
@@ -43,13 +43,11 @@
 (setf (aref board x y) 1)
 
 
-
+;checks if new move is out of bounds
 (defun in-bound (a b) 
-	"checks if new move is out of bounds"
 	(and 
 		(and (if (< a 7) 0 NIL) (if (> a -1) 0 NIL )) 
 		(and (if (< b 7) 0 NIL) (if (> b -1) 0 NIL ))
-
 	)
 )
 
