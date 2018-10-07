@@ -1,8 +1,8 @@
 (defun giraffe ()
 
 	(setq current-pos (cons 0 0))
-	(setq closed-list (list))
-	(setq open-list (list current-pos))
+	(setq closed-list (list current-pos))
+    (setq open-list (list))
 
 	(setf move (make-array '(12 2) 
 	   :initial-contents '((1 0) (0 1) (-1 0) (0 -1) (1 2) (-1 2) (1 -2) (-1 -2) (2 1) (-2 1) (2 -1) (-2 -1) ))
@@ -59,22 +59,29 @@ do (if (and
     )
 
 
-	(loop for num from 0 to 48
-
-		do (format t "Current Position: ~a" current-pos)
-		do (terpri)
-		;do (possible-moves current-pos)
-		do (possible-moves current-pos)
-		do (format t "Available Moves: ~a " open-list)
-		do (move-to (car open-list))
-		do (terpri)
-
-
-		;append current-pos to closed-list
-	)
+	(defun heuristic (open-list)
+            "Chooses the best position from the open list to move to.
+             Returns the position that the giraffe should move to as a cons cell"
+        (car open-list)
+    )
 
 
 
+    (loop for num from 0 to 48
+        do (terpri)
+        do (format t "Current Position: ~a" current-pos)
+        do (terpri)
+        do (possible-moves current-pos)
+        do (format t "Available Moves: ~a " open-list)
+        do (terpri)
+        do (setq next-pos (heuristic open-list))
+        do (format t "Moving to: ~a " next-pos)
+        do (terpri)
+        do (move-to next-pos)
+
+    )
+
+	(format t "Path: ~a" closed-list)
 
 )
 (giraffe)
