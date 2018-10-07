@@ -1,4 +1,4 @@
-(defun giraffe ()
+(defun main ()
 "This is the main function for the program"
 	
 	; Variables
@@ -72,11 +72,12 @@ do (if (and
 	
 
 
-(defun recursive (current-pos)
+(defun giraffe (current-pos)
         "Recursive call that moves to the best next position on the board until there are no more legal moves to make"
         (if (equal current-pos (cons 0 0)) (possible-moves current-pos))
         (when open-list
-                (format t "Current Position: ~a" current-pos)
+                (terpri)
+		(format t "Current Position: ~a" current-pos)
                 (terpri)
                 (possible-moves current-pos)
                 (format t "Available Moves: ~a " open-list)
@@ -87,13 +88,13 @@ do (if (and
 				(setq closed-list (append closed-list (list current-pos)))
 				(setq current-pos next-pos)
 
-                (recursive current-pos)
+                (giraffe current-pos)
         )
     )
 
-(recursive current-pos)
+(giraffe current-pos)
 
 (format t "Path: ~a" closed-list)
 
 )
-(giraffe)
+(main)
