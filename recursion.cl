@@ -1,3 +1,8 @@
+; Authors:
+;  Payne Lacsamana
+;  Chantalle Bril
+;  Bobby Dergham
+
 (defun main ()
 "This is the main function for the program"
 	
