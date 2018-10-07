@@ -33,44 +33,48 @@
 	    )
 	)
 
+(defun possible-moves (current-pos)
+        "Finds all legal moves from the current position and adds them to the open list"
 
-
-	 ;(defun possible-moves (current-pos)
-	; 	; 1) clears the open list 
-	; 	(setq open-list (list current-pos))
-		
-	; 	; 2) finds possible moves 
-	; (loop for num from 0 to 11
-
-	; 	do (if (and
-	; 		(in-bound (+ x (aref move num 0)) (+ y (aref move num 1)))
-
-
-	; 		))
-
-
-; (if 
-; 	(and 
-; 		(in-bound (+ x (aref move num 0)) (+ y (aref move num 1))) 
-; 		(not-visited (+ x (aref move num 0)) (+ y (aref move num 1)))) 
+        ; 1) clear the open list
+        (setq open-list (list))
+        ; 2) find possible moves and add them to open-list
+        (loop for num from 0 to 11
 
 
 
+do (if (and 
+       (in-bound (+ (car current-pos) (aref move num 0)) (+ (cdr current-pos) (aref move num 1)))
+       (not-visited (+ (car current-pos) (aref move num 0)) (+ (cdr current-pos) (aref move num 1)))
+      )
+
+      (setq open-list (append open-list (list (cons (+ (car current-pos) (aref move num 0)) 
+                                                    (+ (cdr current-pos) (aref move num 1)))))
+      )
+
+      NIL
+  )
+                 
+        )
+    )
 
 
+	(loop for num from 0 to 48
 
-	;)
-	; 	; 3) adds them to open list
-	 ;)
-
-	(loop for num from 0 to 5
 		do (format t "Current Position: ~a" current-pos)
 		do (terpri)
 		;do (possible-moves current-pos)
+		do (possible-moves current-pos)
 		do (format t "Available Moves: ~a " open-list)
+		do (move-to (car open-list))
 		do (terpri)
+
+
 		;append current-pos to closed-list
 	)
+
+
+
 
 )
 (giraffe)
