@@ -12,15 +12,16 @@
 (setq current-pos (cons 0 0))
 
 ; List of positions we have already visited. Positions are (x,y) coordinates stored in cons cells
-(setq closed-list '(list current-pos))
-;(setq open-list '(list current-pos))
+(setq closed-list (list current-pos))
+;(setq open-list (list current-pos))
 
 ; ---------- FUNCTION DEFINITIONS ----------
 
 (defun move-to (pos)
-"Moves to the position and updates the current position to the position.
+"Moves to the position.
+ Adds the position to the closed list and updates the current position to the new position.
  Position (pos) is a cons cell where x-coord = (car pos) and y-coord = (cdr pos)"
-(setq closed-list (append closed-list list(pos)))
+(setq closed-list (append closed-list (list pos)))
 (setq current-pos pos)
 )
 
