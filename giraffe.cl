@@ -34,19 +34,23 @@
 
 
 
-	;(defun possible-moves (current-pos)
-		; 1) clears the open list 
-		; 2) finds possible moves 
-		; 3) adds them to open list
-	;)
+	; (defun possible-moves (current-pos)
+	; 	; 1) clears the open list 
+	; 	(setq open-list (list current-pos))
+		
+	; 	; 2) finds possible moves 
+	; 	; 3) adds them to open list
+	; )
 
-	(loop for num from 0 to 20
+	(loop for num from 0 to 5
 		do (format t "Current Position: ~a" current-pos)
 		do (terpri)
-		do (possible-moves current-pos)
+		;do (possible-moves current-pos)
 		do (format t "Available Moves: ~a " open-list)
 		do (terpri)
-
+		do (print (not-visited 0 0))
+		do (terpri)
+		;append current-pos to closed-list
 	)
 
 )
