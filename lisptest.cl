@@ -52,8 +52,12 @@
 )
 
 (defun not-visited (a b)
-	"if position in the board has been stepped on, return 0, else return nil"
-	(if (eql (aref board a b) 0) 0 NIL)
+	"Input: x-coordinate of the position, y-coordinate of the position.
+         If position has not been visited, return T.
+         If position has been visited, return NIL."
+	(not 
+		(member (cons a b) closed-list :test #'equalp)
+	)
 )
 
 
