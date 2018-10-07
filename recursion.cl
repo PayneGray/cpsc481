@@ -1,9 +1,11 @@
 (defun giraffe ()
-
+"This is the main function for the program"
+	
+	; Variables
 	(setq current-pos (cons 0 0))
 	(setq closed-list (list current-pos))
     (setq open-list (list))
-
+	; Possible ways the giraffe can move:
 	(setf move (make-array '(12 2) 
 	   :initial-contents '((1 0) (0 1) (-1 0) (0 -1) (1 2) (-1 2) (1 -2) (-1 -2) (2 1) (-2 1) (2 -1) (-2 -1) ))
 	)
@@ -16,7 +18,9 @@
 
 
 	(defun in-bound (a b) 
-		"checks if new move is out of bounds"
+		"Input: a position (a,b).
+		 Returns true if the position is on the board.
+		 Returns false if the position is out of the board's bounds"
 		(and 
 			(and (if (< a 7) 0 NIL) (if (> a -1) 0 NIL )) 
 			(and (if (< b 7) 0 NIL) (if (> b -1) 0 NIL ))
@@ -25,7 +29,7 @@
 	)
 
 	(defun not-visited (a b)
-    	"Input: x-coordinate of the position, y-coordinate of the position.
+    	"Input: a position on the board at (a,b).
          If position has not been visited, return T.
          If position has been visited, return NIL."
 	    (not 
@@ -47,7 +51,7 @@ do (if (and
        (in-bound (+ (car current-pos) (aref move num 0)) (+ (cdr current-pos) (aref move num 1)))
        (not-visited (+ (car current-pos) (aref move num 0)) (+ (cdr current-pos) (aref move num 1)))
       )
-
+	; If this position is a legal move, add it to the open list
       (setq open-list (append open-list (list (cons (+ (car current-pos) (aref move num 0)) 
                                                     (+ (cdr current-pos) (aref move num 1)))))
       )
@@ -69,7 +73,7 @@ do (if (and
 
 
 (defun recursive (current-pos)
-        "Recursive call"
+        "Recursive call that moves to the best next position on the board until there are no more legal moves to make"
         (if (equal current-pos (cons 0 0)) (possible-moves current-pos))
         (when open-list
                 (format t "Current Position: ~a" current-pos)
