@@ -12,23 +12,24 @@
 (setq current-pos (cons 0 0))
 
 ; List of positions we have already visited. Positions are (x,y) coordinates stored in cons cells
-(setq closed-list '(list current-pos))
-;(setq open-list '(list current-pos))
+(setq closed-list (list current-pos))
+;(setq open-list (list current-pos))
 
 ; ---------- FUNCTION DEFINITIONS ----------
 
 (defun move-to (pos)
-"Moves to the position and updates the current position to the position.
+"Moves to the position.
+ Adds the position to the closed list and updates the current position to the new position.
  Position (pos) is a cons cell where x-coord = (car pos) and y-coord = (cdr pos)"
-(setq closed-list (append closed-list list(pos)))
+(setq closed-list (append closed-list (list pos)))
 (setq current-pos pos)
 )
 
-(defun legal-move (pos)
+
 "Returns true if moving to the position is a legal move,
  Returns false if moving to the position is illegal."
- 
-)
+(defun legal-move (pos))
+
 ;(setf board (make-array '(7 7)))  ; Bobby and I realized that there is no need for a board array if we use a closed list instead
 (setf move (make-array '(12 2) 
    :initial-contents '((1 0) (0 1) (-1 0) (0 -1) (1 2) (-1 2) (1 -2) (-1 -2) (2 1) (-2 1) (2 -1) (-2 -1) ))
@@ -43,19 +44,21 @@
 (setf (aref board x y) 1)
 
 
-
+;checks if new move is out of bounds
 (defun in-bound (a b) 
-	"checks if new move is out of bounds"
 	(and 
 		(and (if (< a 7) 0 NIL) (if (> a -1) 0 NIL )) 
 		(and (if (< b 7) 0 NIL) (if (> b -1) 0 NIL ))
-
 	)
 )
 
 (defun not-visited (a b)
-	"if position in the board has been stepped on, return 0, else return nil"
-	(if (eql (aref board a b) 0) 0 NIL)
+	"Input: x-coordinate of the position, y-coordinate of the position.
+         If position has not been visited, return T.
+         If position has been visited, return NIL."
+	(not 
+		(member (cons a b) closed-list :test #'equalp)
+	)
 )
 
 
