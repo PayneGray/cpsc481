@@ -10,6 +10,7 @@ Team members:
    cbril@csu.fullerton.edu
  - Abdul Dergham
    zyphur@csu.fullerton.edu
+   
  -Luis Rangel
    luirangel@csu.fullerton.edu
 
