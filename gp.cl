@@ -44,18 +44,11 @@
 
 (loop for i from 0 to 49
   
-  do (print (nth i new-population)))
-
-;fitness testing
-; all wrong, replace later
-(setf best-fit (nth 0 population))
-(loop for i from 1 to 49
-    do (print (eval (nth i population)))
-    do (if (< (eval best-fit) (eval (nth i population)))
-        (setf best-fit (nth i population))
-    )
+  do (print (nth i new-population))
 )
-(eval best-fit)
+
+(setf population new-population)
+
 ; ================================= FUNCTIONS ===============================================
 
 
