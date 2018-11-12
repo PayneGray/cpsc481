@@ -11,6 +11,7 @@ Team members:
  - Abdul Dergham
    zyphur@csu.fullerton.edu
  -Luis Rangel
+   luirangel@csu.fullerton.edu
 
 Team name: WOW
 
