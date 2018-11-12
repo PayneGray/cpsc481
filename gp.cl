@@ -38,6 +38,23 @@
 
 ; ================================= FUNCTIONS ===============================================
 
+
+
+(defun crossed-kid (expr1 expr2)
+	(setf kid (list))
+	(setf ops (list (nth 0 expr1) (nth 0 expr2)))
+	(setf kid (append kid (list (nth (random 2) ops))))
+	;takes random part of expr1 and appends it to kid
+	(setf kid (append kid (list (nth (+ 1 (random 2)) expr1))))
+	;takes random part of expr2 and appends it to kid
+	(setf kid (append kid (list (nth (+ 1 (random 2)) expr2))))
+)
+; To use:
+;	(setf expr '(+ (+ (+ 4 -9) 6) (+ (- (* (- z 6) 2) 9) x)))
+;	(crossed-kid expr expr)
+;	(eval (crossed-kid expr expr))
+
+
 (defun generate-expression (num-sub-exprs)
   "Generates a random expression with one operator and two operands. Only call this function with
    an argument of 0. Operators may be +, -, or *. Operands may be constant integers between -9 and
