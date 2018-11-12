@@ -89,6 +89,43 @@
   )
   (return-from generate-expression expression)
 )
+
+(defun calculate-fitness (expression)
+  "Calculates the fitness of the expression and returns a non-negative number. The smaller the
+   number is, the fitter the expression is. The function compares the expression to a set of 10
+   test samples as the criteria for fitness."
+  (setq test-samples (list 
+    '(0 -2 1 -16)
+    '(-4 -5 -3 58)
+    '(9 8 -6 72)
+    '(9 -7 5 113)
+    '(-8 7 3 150)
+    '(5 4 -5 20)
+    '(6 -4 6 41)
+    '(-5 3 -7 -24)
+    '(-6 -5 9 -18)
+    '(1 0 2 2)
+  ))
+  (setq sum-eval-differences 0)
+  ; Evaluate the expression with the values in each test sample
+  (loop for i from 0 to (- (list-length test-samples) 1)
+    do
+    (setq sample (nth i test-samples))
+    (setq x (nth 0 sample))
+    (setq y (nth 1 sample))
+    (setq z (nth 2 sample))
+    (setq desired-eval (nth 3 sample))
+    (setq result-eval (eval expression))
+    ; Find the difference between the evlauted value and the desired evaluated value
+    (setq sum-eval-differences (+ sum-eval-differences (abs (- desired-eval result-eval))))
+  )
+  ; Return the average of the differences
+  (print sum-eval-differences)
+  (print (list-length test-samples))
+  (return-from calculate-fitness (/ sum-eval-differences (list-length test-samples)))
+)
+
+
 ;Input: An expression (list)
 ;;Output: A mutated expression (list)
 
