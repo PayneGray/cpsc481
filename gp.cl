@@ -122,8 +122,6 @@
     (setq sum-eval-differences (+ sum-eval-differences (abs (- desired-eval result-eval))))
   )
   ; Return the average of the differences
-  (print sum-eval-differences)
-  (print (list-length test-samples))
   (return-from calculate-fitness (float (/ sum-eval-differences (list-length test-samples))))
 )
 
