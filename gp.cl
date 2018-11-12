@@ -17,37 +17,6 @@
 (setq all-vars (list 'x 'y 'z))
 (setq all-ops (list '+ '- '*))
 
-; ================================= MAIN FUNCTION ===========================================
-
-(setf population (list))
-
-(loop for n from 0 to 49
-   do (setf population (append population (list (generate-expression 0))))
-)
-(loop for i from 0 to 49
-  do (print (nth i population)))
-
-(setf new-population (list))
-
-(loop for i from 0 to 24
-  do (print "parents:")a
-  do (print (nth (* i 2) population))
-  do (print (nth (+ 1 (* i 2)) population))
-  do (terpri)
-  do (setf new-population (append new-population (list (crossed-kid (nth (* i 2) population) (nth (+ 1 (* i 2)) population)))))
-  do (setf new-population (append new-population (list (crossed-kid (nth (* i 2) population) (nth (+ 1 (* i 2)) population)))))
-  do (print "kids:")
-  do (print (nth (* i 2) new-population))
-  do (print (nth (+ 1 (* i 2)) new-population))
-  do (terpri)
-)
-
-(loop for i from 0 to 49
-  
-  do (print (nth i new-population))
-)
-
-(setf population new-population)
 
 ; ================================= FUNCTIONS ===============================================
 
@@ -56,6 +25,7 @@
 (defun crossed-kid (expr1 expr2)
   (setf kid (list))
   (setf ops (list (nth 0 expr1) (nth 0 expr2)))
+  ;randomly pick an operator from both parents
   (setf kid (append kid (list (nth (random 2) ops))))
   ;takes random part of expr1 and appends it to kid
   (setf kid (append kid (list (nth (+ 1 (random 2)) expr1))))
@@ -119,3 +89,78 @@
   )
   (return-from generate-expression expression)
 )
+;Input: An expression (list)
+;;Output: A mutated expression (list)
+
+;;global list of ops/non-ops
+(defvar all-ops '(+ - *))
+(defvar all-vars '(x y z))
+(defvar all-const '(-9 -8 -7 -6 -5 -4 -3 -2 -1 0 1 2 3 4 5 6 7 8 9))
+
+(defun mutate (expr)
+  "Mutate each 'node' in the expression tree with a probability of 3%. If element is chosen to be mutated, choose from its respective list."
+  (setf *random-state* (make-random-state t))
+  (let ((newexpr (list)) (i 0))
+  (loop while (< i 3)
+        do (setq x (random 100))
+           (setq element (nth i expr))
+           (and (< x 3)
+                (cond ((listp element) (setq element (mutate element)))
+                  ((member element all-ops) (progn (setq y (random 3 (make-random-state t)))
+                                      (setq element (nth y all-ops))))
+                  ((member element all-const) (progn (setq y (random 19 (make-random-state t)))
+                                      (setq element (nth y all-const))))
+                  ((member element all-vars) (progn (setq y (random 3 (make-random-state t)))
+                    (setq element (nth y all-vars))))))
+           (setq newexpr (append newexpr (list element)))
+           (setq i (+ i 1))
+           )
+  (return-from mutate newexpr)
+  ))
+
+; ================================= MAIN FUNCTION ===========================================
+
+
+;GENERATE POPULATION
+(setf population (list))
+(loop for n from 0 to 49
+   do (setf population (append population 
+    (list (generate-expression 0))))
+)
+
+; Start Looping Here
+;(loop for n from 0 to 49
+;test fitness
+; break when found
+
+    (setf new-population (list))
+
+    (loop for i from 0 to 24
+    do (setf new-population 
+      (append new-population 
+        (list 
+          (mutate
+                    (crossed-kid 
+                      (nth (* i 2) population) 
+                      (nth (+ 1 (* i 2)) population))
+                    )
+          )))
+    do (setf new-population 
+      (append new-population 
+        (list 
+          (mutate
+          (crossed-kid 
+            (nth (* i 2) population) 
+            (nth (+ 1 (* i 2)) population))
+          )
+          ))) 
+  )
+
+  (setf population new-population)
+;)
+
+
+(loop for i from 0 to 49
+  do (print (nth i population))
+
+  )
