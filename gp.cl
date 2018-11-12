@@ -93,7 +93,9 @@
 (defun calculate-fitness (expression)
   "Calculates the fitness of the expression and returns a non-negative number. The smaller the
    number is, the fitter the expression is. The function compares the expression to a set of 10
-   test samples as the criteria for fitness."
+   test samples as the criteria for fitness.
+   Input: An expression (list)
+   Output: A non-negative float"
   (setq test-samples (list 
     '(0 -2 1 -16)
     '(-4 -5 -3 58)
@@ -122,31 +124,24 @@
   ; Return the average of the differences
   (print sum-eval-differences)
   (print (list-length test-samples))
-  (return-from calculate-fitness (/ sum-eval-differences (list-length test-samples)))
+  (return-from calculate-fitness (float (/ sum-eval-differences (list-length test-samples))))
 )
 
-
-;Input: An expression (list)
-;;Output: A mutated expression (list)
-
-;;global list of ops/non-ops
-(defvar all-ops '(+ - *))
-(defvar all-vars '(x y z))
-(defvar all-const '(-9 -8 -7 -6 -5 -4 -3 -2 -1 0 1 2 3 4 5 6 7 8 9))
-
 (defun mutate (expr)
-  "Mutate each 'node' in the expression tree with a probability of 3%. If element is chosen to be mutated, choose from its respective list."
+  "Mutate each 'node' in the expression tree with a probability of 3%. If element is chosen to be mutated, choose from its respective list.
+   Input: An expression (list)
+   Output: A mutated expression (list)"
   (setf *random-state* (make-random-state t))
   (let ((newexpr (list)) (i 0))
   (loop while (< i 3)
-        do (setq x (random 100))
+        do (setq x (random 100 (make-random-state t)))
            (setq element (nth i expr))
            (and (< x 3)
                 (cond ((listp element) (setq element (mutate element)))
                   ((member element all-ops) (progn (setq y (random 3 (make-random-state t)))
                                       (setq element (nth y all-ops))))
-                  ((member element all-const) (progn (setq y (random 19 (make-random-state t)))
-                                      (setq element (nth y all-const))))
+                  ((member element all-consts) (progn (setq y (random 19 (make-random-state t)))
+                                      (setq element (nth y all-consts))))
                   ((member element all-vars) (progn (setq y (random 3 (make-random-state t)))
                     (setq element (nth y all-vars))))))
            (setq newexpr (append newexpr (list element)))
