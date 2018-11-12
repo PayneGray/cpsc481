@@ -125,6 +125,24 @@
   (return-from calculate-fitness (float (/ sum-eval-differences (list-length test-samples))))
 )
 
+(defun get-fittest (population)
+  "Input: A list of expressions (lists)
+   Output: the expression with the greatest fitness"
+  (setq fittest-expr (car population))
+  (setq fittest-value (calculate-fitness fittest-expr))
+  (loop for i from 1 to (- (list-length population) 1)
+    do
+    (setq current-expr (nth i population))
+    (if (< (calculate-fitness current-expr) fittest-value)
+      (progn 
+        (setq fittest-expr current-expr)
+        (setq fittest-value (calculate-fitness fittest-expr))
+      )
+    )
+  )
+  (return-from get-fittest fittest-expr)
+)
+
 (defun mutate (expr)
   "Mutate each 'node' in the expression tree with a probability of 3%. If element is chosen to be mutated, choose from its respective list.
    Input: An expression (list)
