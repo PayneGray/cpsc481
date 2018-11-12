@@ -19,40 +19,60 @@
 
 ; ================================= MAIN FUNCTION ===========================================
 
-(setf population (make-array '(50)))
+(setf population (list))
 
-; 2. Be able to fill it, maybe just with (+ 1 1)
 (loop for n from 0 to 49
-   do (setf (aref population n) (* x))
+   do (setf population (append population (list (generate-expression 0))))
 )
-(write population)
+(loop for i from 0 to 49
+  do (print (nth i population)))
 
+(setf new-population (list))
 
-; 3. read a list as an expression
-(setf fun (make-array '(3)))
-(setf (aref fun 0) '*)
-(setf (aref fun 1) 2)
-(setf (aref fun 2) 3)
+(loop for i from 0 to 24
+  do (print "parents:")a
+  do (print (nth (* i 2) population))
+  do (print (nth (+ 1 (* i 2)) population))
+  do (terpri)
+  do (setf new-population (append new-population (list (crossed-kid (nth (* i 2) population) (nth (+ 1 (* i 2)) population)))))
+  do (setf new-population (append new-population (list (crossed-kid (nth (* i 2) population) (nth (+ 1 (* i 2)) population)))))
+  do (print "kids:")
+  do (print (nth (* i 2) new-population))
+  do (print (nth (+ 1 (* i 2)) new-population))
+  do (terpri)
+)
 
+(loop for i from 0 to 49
+  
+  do (print (nth i new-population)))
 
-
+;fitness testing
+; all wrong, replace later
+(setf best-fit (nth 0 population))
+(loop for i from 1 to 49
+    do (print (eval (nth i population)))
+    do (if (< (eval best-fit) (eval (nth i population)))
+        (setf best-fit (nth i population))
+    )
+)
+(eval best-fit)
 ; ================================= FUNCTIONS ===============================================
 
 
 
 (defun crossed-kid (expr1 expr2)
-	(setf kid (list))
-	(setf ops (list (nth 0 expr1) (nth 0 expr2)))
-	(setf kid (append kid (list (nth (random 2) ops))))
-	;takes random part of expr1 and appends it to kid
-	(setf kid (append kid (list (nth (+ 1 (random 2)) expr1))))
-	;takes random part of expr2 and appends it to kid
-	(setf kid (append kid (list (nth (+ 1 (random 2)) expr2))))
+  (setf kid (list))
+  (setf ops (list (nth 0 expr1) (nth 0 expr2)))
+  (setf kid (append kid (list (nth (random 2) ops))))
+  ;takes random part of expr1 and appends it to kid
+  (setf kid (append kid (list (nth (+ 1 (random 2)) expr1))))
+  ;takes random part of expr2 and appends it to kid
+  (setf kid (append kid (list (nth (+ 1 (random 2)) expr2))))
 )
 ; To use:
-;	(setf expr '(+ (+ (+ 4 -9) 6) (+ (- (* (- z 6) 2) 9) x)))
-;	(crossed-kid expr expr)
-;	(eval (crossed-kid expr expr))
+; (setf expr '(+ (+ (+ 4 -9) 6) (+ (- (* (- z 6) 2) 9) x)))
+; (crossed-kid expr expr)
+; (eval (crossed-kid expr expr))
 
 
 (defun generate-expression (num-sub-exprs)
@@ -106,15 +126,3 @@
   )
   (return-from generate-expression expression)
 )
-
-(defun generate-function ()
-	(setf fun (make-array '(3)))
-)
-
-; 4. make a function that takes 2 functions, reads each as a list
-; 5. 
-
-
-; if statements? take the first element to either multiply, subtract, or add
-; 
-
