@@ -14,8 +14,8 @@ while (num-ants-found-goal < 30):
 		if at-start(ant): 
 			ants.remove(ant)
 
-	evaporate-scent()
 	migrate-scent()
+	evaporate-scent()
 	if sizeof ants < 50:
 		spawn-ant()
 
