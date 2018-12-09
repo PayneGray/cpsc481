@@ -202,6 +202,47 @@
     (replace (nth ant-index ants) tabu :start1 2 :end1 3)
 )
 
+(defun move (ant-index)
+	"Moves the ant to the best cell in open list"
+	(let ((ant (nth ant-index ants)))
+		(format t "Moving ant #~D~%" ant)
+
+		;===== Get the open list
+		(setq open-cells (open-list ant))
+
+		;===== If its empty, clear tabu and do it again
+		(if (not open-cells)
+			(progn 
+				(clear-tabu ant-index)
+				(setq open-cells (open-list ant))
+				(format t "Cleared the tabu list")
+			)
+		)
+
+		(format t "Open list: ~S~%" open-cells)
+
+		;===== Call the heuristic on each cell
+		;best-cell is cell with highest heuristic
+		(setq best-cell (car open-cells))
+		(setq best-heuristic 0)
+		(loop for i from 0 to (- (list-length open-cells) 1)
+			do
+			(let ((cell (nth i open-cells)))
+				(format t "Evaluating cell: ~S~%" cell)
+				;(setq heur (heuristic ant cell))
+				(setq heur 5)
+				(format t "Cell ~S has heuristic ~D~%" cell heur)
+				(if (> heur best-heuristic)
+					(progn
+						(setq best-cell cell)
+						(setq best-heuristic heur)
+					)
+				)
+			)
+		)
+		(format t "Best heuristic cell: ~S~%" best-cell)
+	)
+)
 ;===============================;
 
 ;========== MAIN ==========;
@@ -215,7 +256,7 @@
 		do
 		( let ( (ant (nth i ants)) )
 			(format t "Ant ~D :~S~%" i ant)
-			;(move (nth 0 (car ant)) (nth 1 (car ant)))
+			(move i)
 
 			(if (at-goal ant)
 				(progn
