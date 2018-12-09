@@ -125,6 +125,11 @@
 (defun open-list (row col)
 	(setf arr (list))
 	(if (< (+ row 1) 39) ;row is less than 39, can move down
+		(if (>= (aref grid row col) 0)
+		(if (member (list (+ row 1) col) (nth 2 (nth ant-index ants)))
+		; add (list row col) to open list
+		)
+		)
 		(setf arr (append arr (list (list (+ row 1) col)))) 
 	)
 	(if (> (- row 1) -1) ;row is more than 0, can move up
@@ -139,7 +144,21 @@
 	(return-from open-list arr)
 )
 
+(defun at-start (ant)
+	"Returns T if the ant at the given index is at the start position, or NIL otherwise"
+	(if (set-difference (car ant) '(0 0))
+		(return-from at-start T)
+		(return-from at-start NIL)
+	)
+)
 
+(defun at-goal (ant)
+	"Returns T if the ant at the given index is at the goal position, or NIL otherwise"
+	(if (set-difference (car ant) '(39 59))
+		(return-from at-goal T)
+		(return-from at-goal NIL)
+	)
+)
 
 ;===============================;
 
