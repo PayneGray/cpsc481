@@ -87,16 +87,22 @@
 
 
 (defun Migrate-scent (a b) 
+
 "grabs 1% of the current gas"
 (setq gas (/ (aref grid a b) 500))
-"checks to see if left cell exists and if it does the gas moves over"
-(if (> (- a 1) -1) (setf (aref grid (- a 1) b) gas))
-"checks to see if right cell exists and if it does the gas moves over"
-(if (< (+ a 1) 41) (setf (aref grid (+ a 1) b) gas))
-"checks to see if top cell exists and if it does the gas moves over"
-(if (> (- b 1) -1) (setf (aref grid a (- b 1)) gas))
-"checks to see if bottom cell exists and if it does the gas moves over"
-(if (< (+ b 1) 61) (setf (aref grid a (+ b 1)) gas))
+
+"checks to see if left cell exists and if it does the gas moves over if no wall exists"
+(if (> (- a 1) -1) (if (> (aref grid (- a 1) b) -1) (setf (aref grid (- a 1) b) gas)))
+
+"checks to see if right cell exists and if it does the gas moves over if no wall exists"
+(if (< (+ a 1) 41) (if (> (aref grid (+ a 1) b) -1) (setf (aref grid (+ a 1) b) gas)))
+
+"checks to see if top cell exists and if it does the gas moves over if no wall exists"
+(if (> (- b 1) -1) (if (> (aref grid a (- b 1)) -1) (setf (aref grid a (- b 1)) gas)))
+
+"checks to see if bottom cell exists and if it does the gas moves over if no wall exists"
+(if (< (+ b 1) 61) (if (> (aref grid a (+ b 1)) -1) (setf (aref grid a (+ b 1)) gas)))
+
 )
 ;===============================;
 
