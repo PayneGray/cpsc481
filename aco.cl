@@ -6,7 +6,7 @@
 ;Beware when using setq - you might be setting a global variable when a local variable is needed
 
 ; Our list of all ants
-(setq ants (list))
+(defvar ants (list))
 
 ; The number of ants that have found the goal
 (defvar num-ants-found-goal 0)
@@ -14,7 +14,10 @@
 ; The shortest path to the goal
 (defvar shortest-path (list))
 
-; The grid
+; The grid the ants will traverse
+; -1.0 means there is an obstacle on the cell
+; 0 means the cell is clear
+; Positive values mean there is pheromone on the cell
 (aref (setq grid (make-array '(40 60) 
                     :element-type 'single-float
                     :initial-contents '((0.0  0.0  0.0  0.0  0.0  -1.0   0.0  -1.0   0.0  0.0  0.0  0.0  -1.0   0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  -1.0   0.0  0.0  0.0  0.0  -1.0   0.0  0.0  0.0  0.0  -1.0   0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  -1.0   0.0  -1.0   0.0  0.0  0.0  -1.0   0.0  0.0  0.0  0.0  0.0  0.0)
@@ -61,7 +64,13 @@
 ;=======================================;
 
 ;========== FUNCTIONS ==========;
-;Please declare functions in here
+
+(defun spawn-ant ()
+	; add documentation here
+	(setq ants (append ants
+		(list (list '(0 0) nil (list '(0 0)) (list '(0 0))))
+	)) 
+)
 
 ;adds 20 to everything for testing
 (loop for i from 0 to 39
@@ -73,6 +82,7 @@
 )
 
 (defun evaporate-scent ()
+	; add documentation here
 	(loop for i from 0 to 39
 		do(loop for j from 0 to 59
 			do (if (> (aref grid i j) 0.0)
@@ -84,7 +94,6 @@
 	)
 
 )
-
 
 (defun Migrate-scent (a b) 
 "grabs 1% of the current gas"
@@ -101,7 +110,6 @@
 ;===============================;
 
 ;========== MAIN ==========;
-;Please put the main function in here
 
 (loop while (< num-ants-found-goal 30)
 	do
@@ -117,6 +125,8 @@
 			(print ant)
 		)
 	)
+
+	(spawn-ant)
 
 	; Just so we don't have an infinite loop
 	(setq num-ants-found-goal (+ 10 num-ants-found-goal))
