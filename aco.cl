@@ -95,10 +95,11 @@
 
 )
 
+
 (defun Migrate-scent (a b) 
 
 "grabs 1% of the current gas"
-(setq gas (/ (aref grid a b) 500))
+(setq gas (float(/ (aref grid a b) 500)))
 
 "checks to see if left cell exists and if it does the gas moves over if no wall exists"
 (if (> (- a 1) -1) (if (> (aref grid (- a 1) b) -1) (setf (aref grid (- a 1) b) (+ (aref grid (- a 1) b) gas))))
