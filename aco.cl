@@ -8,6 +8,11 @@
 ; Our list of all ants
 (setq ants (list))
 
+; The number of ants that have found the goal
+(defvar num-ants-found-goal 0)
+
+; The shortest path to the goal
+(defvar shortest-path (list))
 
 ;=======================================;
 
@@ -101,4 +106,23 @@
 
 ;========== MAIN ==========;
 ;Please put the main function in here
+
+(loop while (< num-ants-found-goal 30)
+	do
+
+;	(if (eq nil (cdr ants))
+;		(setq ants (car ants))
+;	)
+
+	(loop for i from 0 to (list-length ants)
+		do
+
+		( let ( (ant (nth i ants)) )
+			(print ant)
+		)
+	)
+
+	; Just so we don't have an infinite loop
+	(setq num-ants-found-goal (+ 10 num-ants-found-goal))
+)
 ;==========================;
