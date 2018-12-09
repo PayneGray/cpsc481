@@ -73,26 +73,14 @@
 )
 
 ;adds 20 to everything for testing
-(loop for i from 0 to 39
-	do(loop for j from 0 to 59
-		do (if (= (aref grid i j) 0.0)
-			(setf (aref grid i j) (+ (aref grid i j) 20))
-			)
-	)
-)
-
-(defun evaporate-scent ()
-	; add documentation here
-	(loop for i from 0 to 39
+(defun test ()
+	(loop for i from 0 to 19
 		do(loop for j from 0 to 59
-			do (if (> (aref grid i j) 0.0)
-				(progn
-					(setf (aref grid i j) (- (aref grid i j) (* (aref grid i j) 0.01)))
+			do (if (= (aref grid i j) 0.0)
+				(setf (aref grid i j) (+ (aref grid i j) 20))
 				)
-			)
 		)
 	)
-
 )
 
 
@@ -102,17 +90,56 @@
 	(setq gas (float(/ (aref grid a b) 500)))
 
 	"checks to see if left cell exists and if it does the gas moves over if no wall exists"
-	(if (> (- a 1) -1) (if (> (aref grid (- a 1) b) -1) (setf (aref grid (- a 1) b) (+ (aref grid (- a 1) b) gas))))
+	(if (> (- a 1) -1) 
+		(if (> (aref grid (- a 1) b) -1) 
+			(setf (aref grid (- a 1) b) (+ (aref grid (- a 1) b) gas))))
 
 	"checks to see if right cell exists and if it does the gas moves over if no wall exists"
-	(if (< (+ a 1) 41) (if (> (aref grid (+ a 1) b) -1) (setf (aref grid (+ a 1) b) (+ (aref grid (+ a 1) b) gas))))
+	(if (< (+ a 1) 40) 
+		(if (> (aref grid (+ a 1) b) -1) 
+			(setf (aref grid (+ a 1) b) (+ (aref grid (+ a 1) b) gas))))
 
 	"checks to see if top cell exists and if it does the gas moves over if no wall exists"
 	(if (> (- b 1) -1) (if (> (aref grid a (- b 1)) -1) (setf (aref grid a (- b 1)) (+ (aref grid a (- b 1)) gas))))
 
 	"checks to see if bottom cell exists and if it does the gas moves over if no wall exists"
-	(if (< (+ b 1) 61) (if (> (aref grid a (+ b 1)) -1) (setf (aref grid a (+ b 1)) (+ (aref grid a (+ b 1)) gas))))
+	(if (< (+ b 1) 60) (if (> (aref grid a (+ b 1)) -1) (setf (aref grid a (+ b 1)) (+ (aref grid a (+ b 1)) gas))))
 )
+
+(defun evaporate-scent ()
+	; add documentation here
+	(loop for i from 0 to 39
+		do(loop for j from 0 to 59
+			do (if (> (aref grid i j) 0.0)
+				(progn
+					(migrate-scent i j)
+					(setf (aref grid i j) (- (aref grid i j) (* (aref grid i j) 0.01)))
+				)
+			)
+		)
+	)
+
+)
+
+
+(defun open-list (row col)
+	(setf arr (list))
+	(if (< (+ row 1) 39) ;row is less than 39, can move down
+		(setf arr (append arr (list (list (+ row 1) col)))) 
+	)
+	(if (> (- row 1) -1) ;row is more than 0, can move up
+		(setf arr (append arr (list (list (- row 1) col)))) 
+	)
+	(if (< (+ col 1) 59) ;col is less than 59, can move right
+		(setf arr (append arr (list (list row (+ col 1))))) 
+	)
+	(if (> (- col 1) -1) ; col is more than 0, can move left
+		(setf arr (append arr (list (list row (- col 1))))) 
+	)
+	(return-from open-list arr)
+)
+
+
 
 ;===============================;
 
@@ -135,3 +162,4 @@
 	(setq num-ants-found-goal (+ 10 num-ants-found-goal))
 )
 ;==========================;
+
