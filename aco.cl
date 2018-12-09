@@ -235,8 +235,12 @@
 			)
 		)
 	)
-
-	(spawn-ant)
+    
+    ;;runs evaporate every iteration 
+    (evaporate-scent)
+    ;makes sure theres never more than 50 ants
+	(if (< (list-length ants) 50) (spawn-ant))
+	
 
 	; Just so we don't have an infinite loop
 	(setq num-ants-found-goal (+ 1 num-ants-found-goal))
