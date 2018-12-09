@@ -68,7 +68,7 @@
 (defun spawn-ant ()
 	; add documentation here
 	(setq ants (append ants
-		(list (list '(0 0) nil (list '(0 0)) (list '(0 0))))
+		(list (list (list 0 0) nil (list (list 0 0)) (list (list 0 0))))
 	)) 
 )
 
