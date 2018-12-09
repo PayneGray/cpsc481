@@ -146,7 +146,7 @@
 
 (defun at-start (ant)
 	"Returns T if the ant at the given index is at the start position, or NIL otherwise"
-	(if (set-difference (car ant) '(0 0))
+	(if (equal (car ant) (list 0 0))
 		(return-from at-start T)
 		(return-from at-start NIL)
 	)
@@ -154,7 +154,7 @@
 
 (defun at-goal (ant)
 	"Returns T if the ant at the given index is at the goal position, or NIL otherwise"
-	(if (set-difference (car ant) '(39 59))
+	(if (equal (car ant) (list 39 59))
 		(return-from at-goal T)
 		(return-from at-goal NIL)
 	)
