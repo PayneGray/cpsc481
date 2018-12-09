@@ -68,7 +68,7 @@
 (defun spawn-ant ()
 	; add documentation here
 	(setq ants (append ants
-		(list (list '(0 0) nil (list '(0 0)) (list '(0 0))))
+		(list (list (list 0 0) nil (list (list 0 0)) (list (list 0 0))))
 	)) 
 )
 
@@ -178,6 +178,27 @@
 	(return-from open-list arr)
 )
 
+(defun at-start (ant)
+	"Returns T if the ant at the given index is at the start position, or NIL otherwise"
+	(if (equal (car ant) (list 0 0))
+		(return-from at-start T)
+		(return-from at-start NIL)
+	)
+)
+
+(defun at-goal (ant)
+	"Returns T if the ant at the given index is at the goal position, or NIL otherwise"
+	(if (equal (car ant) (list 39 59))
+		(return-from at-goal T)
+		(return-from at-goal NIL)
+	)
+)
+
+(defun clear_tabu (ant-index)
+    "Resets the ant's tabu list to contain only its current position"
+    (setq tabu (list (list(car (nth ant-index ants)))))
+    (replace (nth ant-index ants) tabu :start1 2 :end1 3)
+)
 
 ;===============================;
 
