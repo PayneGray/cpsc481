@@ -122,23 +122,61 @@
 )
 
 
-(defun open-list (row col)
+; (defun open-list (row col)
+; 	(setf arr (list))
+; 	(if (< (+ row 1) 39) ;row is less than 39, can move down
+; 		(setf arr (append arr (list (list (+ row 1) col)))) 
+; 	)
+; 	(if (> (- row 1) -1) ;row is more than 0, can move up
+; 		(setf arr (append arr (list (list (- row 1) col)))) 
+; 	)
+; 	(if (< (+ col 1) 59) ;col is less than 59, can move right
+; 		(setf arr (append arr (list (list row (+ col 1))))) 
+; 	)
+; 	(if (> (- col 1) -1) ; col is more than 0, can move left
+; 		(setf arr (append arr (list (list row (- col 1))))) 
+; 	)
+; 	(return-from open-list arr)
+; )
+
+(setq test-ant (list (list 0 1) nil (list (list 0 0) (list 0 1)) (list (list 0 0) (list 0 1))))
+
+(defun open-list (ant)
 	(setf arr (list))
-	(if (< (+ row 1) 39) ;row is less than 39, can move down
-		(setf arr (append arr (list (list (+ row 1) col)))) 
+	(setf row (nth 0 (nth 0 ant)))
+	(setf col (nth 1 (nth 0 ant)))
+	;(setf tabu (nth 2 ant))
+
+	(if (< (+ row 1) 39.0) ;row is less than 39, can move down
+		(if (/= -1.0 (aref grid (+ row 1) col))
+			;check if in tabu
+			(setf arr (append arr (list (list (+ row 1) col)))) 
+		)
 	)
-	(if (> (- row 1) -1) ;row is more than 0, can move up
-		(setf arr (append arr (list (list (- row 1) col)))) 
+	(if (> (- row 1) -1.0) ;row is more than 0, can move up
+		(if (/= -1.0 (aref grid (- row 1) col))
+			;check if in tabu
+			(setf arr (append arr (list (list (- row 1) col)))) 
+		)
 	)
-	(if (< (+ col 1) 59) ;col is less than 59, can move right
-		(setf arr (append arr (list (list row (+ col 1))))) 
+	(if (< (+ col 1) 59.0) ;col is less than 59, can move right
+		(if (/= -1.0 (aref grid row (+ col 1)))
+			;check if in tabu
+			(setf arr (append arr (list (list row (+ col 1))))) 
+		)
 	)
-	(if (> (- col 1) -1) ; col is more than 0, can move left
-		(setf arr (append arr (list (list row (- col 1))))) 
+	(if (> (- col 1) -1.0) ; col is more than 0, can move left
+		(if (/= -1.0 (aref grid row (- col 1)))
+			;check if in tabu
+			(setf arr (append arr (list (list row (- col 1))))) 
+		)
 	)
+
+	; (loop for i in (nth 2 ant)
+	; 	do (remove i arr)
+	; )
 	(return-from open-list arr)
 )
-
 
 
 ;===============================;
