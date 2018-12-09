@@ -1,3 +1,4 @@
+;!!!! DELETE DEBUG CODE BEFORE SUBMIT !!!!!
 ; CPSC 481 - Artificial Intelligence
 ; Team: Chantalle Bril, Payne Lacsamana, Abdul Dergham, Luis Rangel
 
@@ -223,13 +224,13 @@
 (defun move (ant-index)
 	"Moves the ant to the best cell possible"
 	(let ((ant (nth ant-index ants)))
-		(format t "  Moving ant ~D :~S~%" ant-index ant)
+		;(format t "  Moving ant ~D :~S~%" ant-index ant)
 
 		;===== Drop scent if returning
 		(if (nth 1 ant)
 			;(drop-scent)
 			(format t "  ant is returning!~%")
-			(format t "  ant is foraging~%")
+			;(format t "  ant is foraging~%")
 		)
 
 		;===== Get the open list
@@ -244,7 +245,7 @@
 			)
 		)
 
-		(format t "  Open list: ~S~%" open-cells)
+		;(format t "  Open list: ~S~%" open-cells)
 
 		;===== Call the heuristic on each cell
 		;best-cell is cell with highest heuristic
@@ -253,10 +254,10 @@
 		(loop for i from 0 to (- (list-length open-cells) 1)
 			do
 			(let ((cell (nth i open-cells)))
-				(format t "    Evaluating cell: ~S~%" cell)
+				;(format t "    Evaluating cell: ~S~%" cell)
 				;(setq heur (heuristic ant cell))
 				(setq heur 9000)
-				(format t "    Cell ~S has heuristic ~D~%" cell heur)
+				;(format t "    Cell ~S has heuristic ~D~%" cell heur)
 				(if (> heur best-heuristic)
 					(progn
 						(setq best-cell cell)
@@ -265,11 +266,11 @@
 				)
 			)
 		)
-		(format t "  Moving to best cell: ~S~%" best-cell)
+		;(format t "  Moving to best cell: ~S~%" best-cell)
 		(replace (nth ant-index ants) (list best-cell) :start1 0 :end1 1)
 		;===== Add to tabu
 		(replace (nth ant-index ants) (list (push best-cell (nth 2 ant))) :start1 2 :end1 3)
-		; trim-tabu
+		(trim-tabu ant-index)
 		;===== Add to closed
 		(replace (nth ant-index ants) (list (append (nth 3 ant) (list best-cell))) :start1 3 :end1 4)
 	)
@@ -277,16 +278,15 @@
 ;===============================;
 
 ;========== MAIN ==========;
-
 (loop while (< num-ants-found-goal 30)
 	do
-		(format t "========== Iteration ~D ==========~%" iterations)
+		;(format t "========== Iteration ~D ==========~%" iterations)
 		(setq iterations (+ 1 iterations))
 
 	(loop for i from 0 to (- (list-length ants) 1)
 		do
 		( let ( (ant (nth i ants)) )
-			(format t "~%----- Ant ~D ----- ~S~%" i ant)
+			;(format t "~%----- Ant ~D ----- ~S~%" i ant)
 			(move i)
 
 			(if (at-goal ant)
@@ -306,15 +306,23 @@
 			)
 		)
 	)
-    
-    ;;runs evaporate every iteration 
     (evaporate-scent)
     ;makes sure theres never more than 50 ants
+    ; !!!!! CHANGE 3 TO 50 !!!!!!!
 	(if (< (list-length ants) 3) (spawn-ant))
 	
 
 	; Just so we don't have an infinite loop
+	; !!!!! DELETE ME BEFORE SUBMIT!!!! VVV
 	(setq num-ants-found-goal (+ 1 num-ants-found-goal))
+)
+
+(format t "Final ant check at iteration ~D~%" iterations)
+(loop for i from 0 to (- (list-length ants) 1)
+	do
+	(let ((ant (nth i ants)))
+		(format t "Ant ~D : ~S~%  ~S~%  ~S~%" i (car ant) (nth 2 ant) (nth 3 ant))
+	)
 )
 ;==========================;
 
