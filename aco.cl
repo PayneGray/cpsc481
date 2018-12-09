@@ -143,6 +143,7 @@
 )
 
 (defun open-list (ant)
+	"add documentation here"
 	(setf arr (list))
 	(setf row (nth 0 (nth 0 ant)))
 	(setf col (nth 1 (nth 0 ant)))
@@ -202,9 +203,22 @@
     (replace (nth ant-index ants) tabu :start1 2 :end1 3)
 )
 
-; (defun trim-tabu 
+(defun without-last(l)
+	"Return list without last element"
+    (reverse (cdr (reverse l)))
+)
 
-; )
+(defun trim-tabu (ant-index)
+	"Make sure the tabu list is not longer than 8 cells long"
+	(let ((tabu (nth 2 (nth ant-index ants))))
+		(if (> (list-length tabu) 7)
+			(progn
+				(setq new-tabu (without-last tabu))
+				(replace (nth ant-index ants) (list new-tabu) :start1 2 :end1 3)
+			)
+		)
+	)
+)
 
 (defun move (ant-index)
 	"Moves the ant to the best cell possible"
@@ -241,7 +255,7 @@
 			(let ((cell (nth i open-cells)))
 				(format t "    Evaluating cell: ~S~%" cell)
 				;(setq heur (heuristic ant cell))
-				(setq heur 5)
+				(setq heur 9000)
 				(format t "    Cell ~S has heuristic ~D~%" cell heur)
 				(if (> heur best-heuristic)
 					(progn
@@ -277,11 +291,10 @@
 
 			(if (at-goal ant)
 				(progn
-					(print "@@@!FOUND FOOD! !PARTY!@@@")
+					(print "@@@ !FOUND FOOD! !PARTY! @@@")
 					(setq num-ants-found-goal (+ num-ants-found-goal 1))
 					; Update shortest path
 					; Change ant mode to 'returning'
-					; drop-scent
 				)
 			)
 
@@ -297,7 +310,7 @@
     ;;runs evaporate every iteration 
     (evaporate-scent)
     ;makes sure theres never more than 50 ants
-	(if (< (list-length ants) 50) (spawn-ant))
+	(if (< (list-length ants) 3) (spawn-ant))
 	
 
 	; Just so we don't have an infinite loop
