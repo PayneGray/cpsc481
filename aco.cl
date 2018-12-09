@@ -160,6 +160,12 @@
 	)
 )
 
+(defun clear_tabu (ant-index)
+    "Resets the ant's tabu list to contain only its current position"
+    (setq tabu (list (list(car (nth ant-index ants)))))
+    (replace (nth ant-index ants) tabu :start1 2 :end1 3)
+)
+
 ;===============================;
 
 ;========== MAIN ==========;
