@@ -14,6 +14,9 @@
 ; The shortest path to the goal
 (defvar shortest-path (list))
 
+; Number of iterations / moves until program reached the end
+(defvar iterations 0)
+
 ; The grid the ants will traverse
 ; -1.0 means there is an obstacle on the cell
 ; 0 means the cell is clear
@@ -172,19 +175,38 @@
 
 (loop while (< num-ants-found-goal 30)
 	do
+		(format t "========== Iteration ~D ==========~%" iterations)
+		(setq iterations (+ 1 iterations))
 
 	(loop for i from 0 to (- (list-length ants) 1)
 		do
-
 		( let ( (ant (nth i ants)) )
-			(print ant)
+			(format t "Ant ~D :~S~%" i ant)
+			;(move (nth 0 (car ant)) (nth 1 (car ant)))
+
+			(if (at-goal ant)
+				(progn
+					(print "This ant found the goal!")
+					(setq num-ants-found-goal (+ num-ants-found-goal 1))
+					; Update shortest path
+					; Change ant mode to 'returning'
+					; drop-scent
+				)
+			)
+
+			(if (at-start ant)
+				(progn
+					(format t "This ant is at the colony~%")
+					; Remove the ant from the list of ants
+				)
+			)
 		)
 	)
 
 	(spawn-ant)
 
 	; Just so we don't have an infinite loop
-	(setq num-ants-found-goal (+ 10 num-ants-found-goal))
+	(setq num-ants-found-goal (+ 1 num-ants-found-goal))
 )
 ;==========================;
 
