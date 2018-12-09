@@ -202,10 +202,21 @@
     (replace (nth ant-index ants) tabu :start1 2 :end1 3)
 )
 
+; (defun trim-tabu 
+
+; )
+
 (defun move (ant-index)
-	"Moves the ant to the best cell in open list"
+	"Moves the ant to the best cell possible"
 	(let ((ant (nth ant-index ants)))
-		(format t "Moving ant #~D~%" ant)
+		(format t "  Moving ant ~D :~S~%" ant-index ant)
+
+		;===== Drop scent if returning
+		(if (nth 1 ant)
+			;(drop-scent)
+			(format t "  ant is returning!~%")
+			(format t "  ant is foraging~%")
+		)
 
 		;===== Get the open list
 		(setq open-cells (open-list ant))
@@ -215,11 +226,11 @@
 			(progn 
 				(clear-tabu ant-index)
 				(setq open-cells (open-list ant))
-				(format t "Cleared the tabu list")
+				(format t "!!! Cleared the tabu list !!!")
 			)
 		)
 
-		(format t "Open list: ~S~%" open-cells)
+		(format t "  Open list: ~S~%" open-cells)
 
 		;===== Call the heuristic on each cell
 		;best-cell is cell with highest heuristic
@@ -228,10 +239,10 @@
 		(loop for i from 0 to (- (list-length open-cells) 1)
 			do
 			(let ((cell (nth i open-cells)))
-				(format t "Evaluating cell: ~S~%" cell)
+				(format t "    Evaluating cell: ~S~%" cell)
 				;(setq heur (heuristic ant cell))
 				(setq heur 5)
-				(format t "Cell ~S has heuristic ~D~%" cell heur)
+				(format t "    Cell ~S has heuristic ~D~%" cell heur)
 				(if (> heur best-heuristic)
 					(progn
 						(setq best-cell cell)
@@ -240,7 +251,13 @@
 				)
 			)
 		)
-		(format t "Best heuristic cell: ~S~%" best-cell)
+		(format t "  Moving to best cell: ~S~%" best-cell)
+		(replace (nth ant-index ants) (list best-cell) :start1 0 :end1 1)
+		;===== Add to tabu
+		(replace (nth ant-index ants) (list (push best-cell (nth 2 ant))) :start1 2 :end1 3)
+		; trim-tabu
+		;===== Add to closed
+		(replace (nth ant-index ants) (list (append (nth 3 ant) (list best-cell))) :start1 3 :end1 4)
 	)
 )
 ;===============================;
@@ -255,12 +272,12 @@
 	(loop for i from 0 to (- (list-length ants) 1)
 		do
 		( let ( (ant (nth i ants)) )
-			(format t "Ant ~D :~S~%" i ant)
+			(format t "~%----- Ant ~D ----- ~S~%" i ant)
 			(move i)
 
 			(if (at-goal ant)
 				(progn
-					(print "This ant found the goal!")
+					(print "@@@!FOUND FOOD! !PARTY!@@@")
 					(setq num-ants-found-goal (+ num-ants-found-goal 1))
 					; Update shortest path
 					; Change ant mode to 'returning'
@@ -270,7 +287,7 @@
 
 			(if (at-start ant)
 				(progn
-					(format t "This ant is at the colony~%")
+					(format t "!!! This ant is at the colony !!!~%")
 					; Remove the ant from the list of ants
 				)
 			)
