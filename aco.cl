@@ -72,7 +72,7 @@
 	)) 
 )
 
-;adds 20 to everything for testing
+;adds 20 to half the grid for testing
 (defun test ()
 	(loop for i from 0 to 19
 		do(loop for j from 0 to 59
@@ -113,6 +113,7 @@
 			do (if (> (aref grid i j) 0.0)
 				(progn
 					(migrate-scent i j)
+					;maybe make to 0 if it's less than 0
 					(setf (aref grid i j) (- (aref grid i j) (* (aref grid i j) 0.01)))
 				)
 			)
@@ -122,59 +123,57 @@
 )
 
 
-; (defun open-list (row col)
-; 	(setf arr (list))
-; 	(if (< (+ row 1) 39) ;row is less than 39, can move down
-; 		(setf arr (append arr (list (list (+ row 1) col)))) 
-; 	)
-; 	(if (> (- row 1) -1) ;row is more than 0, can move up
-; 		(setf arr (append arr (list (list (- row 1) col)))) 
-; 	)
-; 	(if (< (+ col 1) 59) ;col is less than 59, can move right
-; 		(setf arr (append arr (list (list row (+ col 1))))) 
-; 	)
-; 	(if (> (- col 1) -1) ; col is more than 0, can move left
-; 		(setf arr (append arr (list (list row (- col 1))))) 
-; 	)
-; 	(return-from open-list arr)
-; )
-
 (setq test-ant (list (list 0 1) nil (list (list 0 0) (list 0 1)) (list (list 0 0) (list 0 1))))
+
+(setq test-ant2 (list (list 0 1) nil (list (list 0 1) ) (list (list 0 0) (list 0 1))))
+
+(defun is-in (elem arr)
+	; if element is in array, return 1
+	; else, return nil
+	(setf true nil)
+	(loop for i in arr
+		do (if (and (= (nth 0 elem) (nth 0 i)) (= (nth 1 elem) (nth 1 i)))
+			(setf true 1)
+			)
+	)
+	(return-from is-in true)
+)
 
 (defun open-list (ant)
 	(setf arr (list))
 	(setf row (nth 0 (nth 0 ant)))
 	(setf col (nth 1 (nth 0 ant)))
-	;(setf tabu (nth 2 ant))
+	(setf tabu (nth 2 ant))
 
 	(if (< (+ row 1) 39.0) ;row is less than 39, can move down
 		(if (/= -1.0 (aref grid (+ row 1) col))
-			;check if in tabu
-			(setf arr (append arr (list (list (+ row 1) col)))) 
+			(if (not (is-in (list (+ row 1) col) tabu))
+				(setf arr (append arr (list (list (+ row 1) col)))) 
+			)
 		)
 	)
 	(if (> (- row 1) -1.0) ;row is more than 0, can move up
 		(if (/= -1.0 (aref grid (- row 1) col))
-			;check if in tabu
-			(setf arr (append arr (list (list (- row 1) col)))) 
+			(if (not (is-in (list (- row 1) col) tabu))
+				(setf arr (append arr (list (list (- row 1) col)))) 
+			)
 		)
 	)
 	(if (< (+ col 1) 59.0) ;col is less than 59, can move right
 		(if (/= -1.0 (aref grid row (+ col 1)))
-			;check if in tabu
-			(setf arr (append arr (list (list row (+ col 1))))) 
+			(if (not (is-in (list row (+ col 1)) tabu))
+				(setf arr (append arr (list (list row (+ col 1))))) 
+			)
 		)
 	)
 	(if (> (- col 1) -1.0) ; col is more than 0, can move left
 		(if (/= -1.0 (aref grid row (- col 1)))
-			;check if in tabu
-			(setf arr (append arr (list (list row (- col 1))))) 
+			(if (not (is-in (list row (- col 1)) tabu))
+				(setf arr (append arr (list (list row (- col 1))))) 
+			)
 		)
 	)
 
-	; (loop for i in (nth 2 ant)
-	; 	do (remove i arr)
-	; )
 	(return-from open-list arr)
 )
 
