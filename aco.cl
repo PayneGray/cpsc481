@@ -259,8 +259,8 @@
 	"Determines the heuristic value for the ant to move to the grid location at (a b).
 	 Heuristic is a non-negative float value. Higher values imply higher favorability"
 	 (setq fuzz (rand-fuzz))
-	 ;(setq heur (+ (mode-direction ant a b) (* (aref grid a b) 0.1) fuzz) )
-	 (setq heur (+ (* (aref grid a b) 0.1) fuzz) )
+	 (setq heur (+ (mode-direction ant a b) (* (aref grid a b) 0.1) fuzz) )
+	 ;(setq heur (+ (* (aref grid a b) 0.1) fuzz) )
 	 (return-from heuristic (float heur))
 )
 
@@ -333,7 +333,7 @@
 ;===============================;
 
 ;========== MAIN ==========;
-(loop while (< num-ants-found-goal 5000)
+(loop while (< num-ants-found-goal 12000)
 	do
 		;(format t "========== Iteration ~D ==========~%" iterations)
 		(setq iterations (+ 1 iterations))
