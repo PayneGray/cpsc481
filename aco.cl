@@ -201,7 +201,7 @@
 	)
 )
 
-(defun clear_tabu (ant-index)
+(defun clear-tabu (ant-index)
     "Resets the ant's tabu list to contain only its current position"
     (setq tabu (list (list(car (nth ant-index ants)))))
     (replace (nth ant-index ants) tabu :start1 2 :end1 3)
@@ -244,18 +244,30 @@
 	 	(format t "M(ant ~D ~D) = ~D" a b diff)
 	 	(if (nth 1 ant)
 	 		; If ant is returning, return inverse of diff
-	 		(return-from mode-direction (* -1 diff))
+	 		(return-from mode-direction (float (* -1 diff)))
 	 		; If ant is foraging, just return diff
-	 		(return-from mode-direction diff)
+	 		(return-from mode-direction (float diff))
 	 	)
 	 )
 )
 
-; (defun heuristic (ant a b)
-; 	"Determines the heuristic value for the ant to move to the grid location at (a b).
-; 	 Heuristic is a non-negative float value. Higher values imply higher favorability"
+(defun rand-fuzz ()
+	"Returns a random number between -.8 and .8"
+	(return-from rand-fuzz (float (/ (- (random 161) 80) 100.0)))
+)
 
-; )
+(defun heuristic (ant a b)
+	"Determines the heuristic value for the ant to move to the grid location at (a b).
+	 Heuristic is a non-negative float value. Higher values imply higher favorability"
+	 (format t "    Getting heuristic of cell (~D ~D)~%" a b)
+	 (format t "      mode-direction : ~D~%" (mode-direction ant a b))
+	 (format t "      (a b) = ~D~%" (aref grid a b))
+	 (setq fuzz (rand-fuzz))
+	 (format t "      fuzz: ~D~%" fuzz)
+	 (setq heur (+ (mode-direction ant a b) (* (aref grid a b) 0.1) fuzz) )
+	 (format t "    Heuristic: ~D~%" heur)
+	 (return-from heuristic (float heur))
+)
 
 (defun move (ant-index)
 	"Moves the ant to the best cell possible"
@@ -271,7 +283,7 @@
 		;===== Get the open list
 		(setq open-cells (open-list ant))
 
-		;===== If its empty, clear tabu and do it again
+		;===== If open list is empty, clear tabu and do it again
 		(if (not open-cells)
 			(progn 
 				(clear-tabu ant-index)
@@ -290,8 +302,7 @@
 			do
 			(let ((cell (nth i open-cells)))
 				(format t "    Evaluating cell: ~S~%" cell)
-				;(setq heur (heuristic ant cell))
-				(setq heur 9000)
+				(setq heur (heuristic ant (nth 0 cell) (nth 1 cell)))
 				(format t "    Cell ~S has heuristic ~D~%" cell heur)
 				(if (> heur best-heuristic)
 					(progn
@@ -310,6 +321,19 @@
 		(replace (nth ant-index ants) (list (append (nth 3 ant) (list best-cell))) :start1 3 :end1 4)
 	)
 )
+
+(defun get-shortest-path (all-paths)
+  (loop for i from 0 to (- (list-length all-paths) 1)
+    do
+    (if (not shortest-path)
+      (setq shortest-path (nth i all-paths))
+    )
+    (if (< (list-length (nth i  all-paths)) (list-length shortest-path))
+      (setq shortest-path (nth i all-paths))
+    )
+  )
+)
+
 ;===============================;
 
 ;========== MAIN ==========;
