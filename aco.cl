@@ -18,6 +18,9 @@
 ; Number of iterations / moves until program reached the end
 (defvar iterations 0)
 
+; All paths from start to goal
+(defvar all-paths (list))
+
 ; The grid the ants will traverse
 ; -1.0 means there is an obstacle on the cell
 ; 0 means the cell is clear
@@ -221,16 +224,48 @@
 	)
 )
 
+(defun drop-scent (ant)
+  "Drops a scent value of 10 at given ant's current cell location."
+  (progn
+    (setq x (car (nth 0 ant)))
+    (setq y (cdr (car (nth 0 ant))))
+    (setf (aref grid x y) (+ (aref grid x y) 10))
+    )
+  )
+
+(defun mode-direction (ant a b)
+	"If the ant is foraging, it prefers to move to the bottom right.
+	 If the ant is returning, it prefers to move to the top left.
+	 Returns the sum difference between the coordinates of the ant and the grid location coordinates.
+	 When foraging, ant prefers a positive difference.
+	 When returning, ant prefers a negative difference."
+	 (let ( (x (car (car ant))) (y (car(cdr (car ant)))) )
+	 	(setq diff (+ (- a x) (- b y)))
+	 	(format t "M(ant ~D ~D) = ~D" a b diff)
+	 	(if (nth 1 ant)
+	 		; If ant is returning, return inverse of diff
+	 		(return-from mode-direction (* -1 diff))
+	 		; If ant is foraging, just return diff
+	 		(return-from mode-direction diff)
+	 	)
+	 )
+)
+
+; (defun heuristic (ant a b)
+; 	"Determines the heuristic value for the ant to move to the grid location at (a b).
+; 	 Heuristic is a non-negative float value. Higher values imply higher favorability"
+
+; )
+
 (defun move (ant-index)
 	"Moves the ant to the best cell possible"
 	(let ((ant (nth ant-index ants)))
-		;(format t "  Moving ant ~D :~S~%" ant-index ant)
+		(format t "  Moving ant ~D :~S~%" ant-index ant)
 
 		;===== Drop scent if returning
 		(if (nth 1 ant)
-			;(drop-scent)
-			(format t "  ant is returning!~%")
-			;(format t "  ant is foraging~%")
+			(drop-scent ant)
+			(format t "  ant is foraging!~%")
 		)
 
 		;===== Get the open list
@@ -245,7 +280,7 @@
 			)
 		)
 
-		;(format t "  Open list: ~S~%" open-cells)
+		(format t "  Open list: ~S~%" open-cells)
 
 		;===== Call the heuristic on each cell
 		;best-cell is cell with highest heuristic
@@ -254,10 +289,10 @@
 		(loop for i from 0 to (- (list-length open-cells) 1)
 			do
 			(let ((cell (nth i open-cells)))
-				;(format t "    Evaluating cell: ~S~%" cell)
+				(format t "    Evaluating cell: ~S~%" cell)
 				;(setq heur (heuristic ant cell))
 				(setq heur 9000)
-				;(format t "    Cell ~S has heuristic ~D~%" cell heur)
+				(format t "    Cell ~S has heuristic ~D~%" cell heur)
 				(if (> heur best-heuristic)
 					(progn
 						(setq best-cell cell)
@@ -266,7 +301,7 @@
 				)
 			)
 		)
-		;(format t "  Moving to best cell: ~S~%" best-cell)
+		(format t "  Moving to best cell: ~S~%" best-cell)
 		(replace (nth ant-index ants) (list best-cell) :start1 0 :end1 1)
 		;===== Add to tabu
 		(replace (nth ant-index ants) (list (push best-cell (nth 2 ant))) :start1 2 :end1 3)
@@ -280,13 +315,13 @@
 ;========== MAIN ==========;
 (loop while (< num-ants-found-goal 30)
 	do
-		;(format t "========== Iteration ~D ==========~%" iterations)
+		(format t "========== Iteration ~D ==========~%" iterations)
 		(setq iterations (+ 1 iterations))
 
 	(loop for i from 0 to (- (list-length ants) 1)
 		do
 		( let ( (ant (nth i ants)) )
-			;(format t "~%----- Ant ~D ----- ~S~%" i ant)
+			(format t "~%----- Ant ~D -----~%~S~%" i ant)
 			(move i)
 
 			(if (at-goal ant)
