@@ -350,7 +350,7 @@
 				; If ant is foraging and found the goal
 				(if (and (at-goal ant) (not (nth 1 ant)))
 					(progn
-						(format t "@@@ !FOUND FOOD! !PARTY! @@@")
+						(format t "@@@ !FOUND FOOD! !PARTY! @@@~%")
 						(setq num-ants-found-goal (+ num-ants-found-goal 1))
 						(setq all-paths (append all-paths (list (nth 3 ant))))
 						; Ant switches to returning mode
