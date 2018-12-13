@@ -25,6 +25,7 @@
 ; -1.0 means there is an obstacle on the cell
 ; 0 means the cell is clear
 ; Positive values mean there is pheromone on the cell
+(defvar grid)
 (aref (setq grid (make-array '(40 60) 
                     :element-type 'single-float
                     :initial-contents '(( 0.0 0.0 0.0 0.0 0.0 -1.0  0.0 -1.0  0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 -1.0  0.0 0.0 0.0 0.0 0.0 0.0 -1.0  0.0 0.0 0.0 0.0 0.0 -1.0  0.0 -1.0  0.0 0.0 0.0 0.0 0.0 -1.0  0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 -1.0  0.0 0.0 0.0 -1.0  0.0 0.0 0.0 0.0 -1.0  0.0 0.0 0.0)
@@ -90,11 +91,10 @@
 	)
 )
 
-
 (defun migrate-scent (a b) 
 	;documentation here
 	"grabs 1% of the current gas"
-	(setq gas (float(/ (aref grid a b) 500)))
+	(defparameter gas (float(/ (aref grid a b) 500)))
 
 	"checks to see if left cell exists and if it does the gas moves over if no wall exists"
 	(if (> (- a 1) -1) 
@@ -129,15 +129,14 @@
 
 )
 
+; (setq test-ant (list (list 0 1) nil (list (list 0 0) (list 0 1)) (list (list 0 0) (list 0 1))))
 
-(setq test-ant (list (list 0 1) nil (list (list 0 0) (list 0 1)) (list (list 0 0) (list 0 1))))
-
-(setq test-ant2 (list (list 0 1) nil (list (list 0 1) ) (list (list 0 0) (list 0 1))))
+; (setq test-ant2 (list (list 0 1) nil (list (list 0 1) ) (list (list 0 0) (list 0 1))))
 
 (defun is-in (elem arr)
 	; if element is in array, return 1
 	; else, return nil
-	(setf true nil)
+	(defparameter true nil)
 	(loop for i in arr
 		do (if (and (= (nth 0 elem) (nth 0 i)) (= (nth 1 elem) (nth 1 i)))
 			(setf true 1)
@@ -148,10 +147,10 @@
 
 (defun open-list (ant)
 	"add documentation here"
-	(setf arr (list))
-	(setf row (nth 0 (nth 0 ant)))
-	(setf col (nth 1 (nth 0 ant)))
-	(setf tabu (nth 2 ant))
+	(defparameter arr (list))
+	(defparameter row (nth 0 (nth 0 ant)))
+	(defparameter col (nth 1 (nth 0 ant)))
+	(defparameter tabu (nth 2 ant))
 
 	(if (< (+ row 1) 39.0) ;row is less than 39, can move down
 		(if (/= -1.0 (aref grid (+ row 1) col))
@@ -203,7 +202,7 @@
 
 (defun clear-tabu (ant-index)
     "Resets the ant's tabu list to contain only its current position"
-    (setq tabu (list (list(car (nth ant-index ants)))))
+    (defparameter tabu (list (list(car (nth ant-index ants)))))
     (replace (nth ant-index ants) tabu :start1 2 :end1 3)
 )
 
@@ -217,7 +216,7 @@
 	(let ((tabu (nth 2 (nth ant-index ants))))
 		(if (> (list-length tabu) 7)
 			(progn
-				(setq new-tabu (without-last tabu))
+				(defparameter new-tabu (without-last tabu))
 				(replace (nth ant-index ants) (list new-tabu) :start1 2 :end1 3)
 			)
 		)
@@ -227,8 +226,8 @@
 (defun drop-scent (ant)
   "Drops a scent value of 10 at given ant's cell location."
   (progn
-    (setq x (car (nth 0 ant)))
-    (setq y (car (cdr (nth 0 ant))))
+    (defparameter x (car (nth 0 ant)))
+    (defparameter y (car (cdr (nth 0 ant))))
     (setf (aref grid x y) (+ (aref grid x y) 10))
   )
 )
@@ -240,7 +239,7 @@
 	 When foraging, ant prefers a positive difference.
 	 When returning, ant prefers a negative difference."
 	 (let ( (x (car (car ant))) (y (car(cdr (car ant)))) )
-	 	(setq diff (+ (- a x) (- b y)))
+	 	(defparameter diff (+ (- a x) (- b y)))
 	 	(if (nth 1 ant)
 	 		; If ant is returning, return inverse of diff
 	 		(return-from mode-direction (float (* -1 diff)))
@@ -258,9 +257,9 @@
 (defun heuristic (ant a b)
 	"Determines the heuristic value for the ant to move to the grid location at (a b).
 	 Heuristic is a non-negative float value. Higher values imply higher favorability"
-	 (setq fuzz (rand-fuzz))
+	 (defparameter fuzz (rand-fuzz))
 	 ;(setq heur (+ (mode-direction ant a b) (* (aref grid a b) 0.1) fuzz) )
-	 (setq heur (+ (* (aref grid a b) 0.1) fuzz) )
+	 (defparameter heur (+ (* (aref grid a b) 0.1) fuzz) )
 	 (return-from heuristic (float heur))
 )
 
@@ -276,7 +275,7 @@
 		)
 
 		;===== Get the open list
-		(setq open-cells (open-list ant))
+		(defparameter open-cells (open-list ant))
 
 		;===== If open list is empty, clear tabu and do it again
 		(if (not open-cells)
@@ -291,13 +290,13 @@
 
 		;===== Call the heuristic on each cell
 		;best-cell is cell with highest heuristic
-		(setq best-cell (car open-cells))
-		(setq best-heuristic 0)
+		(defparameter best-cell (car open-cells))
+		(defparameter best-heuristic 0)
 		(loop for i from 0 to (- (list-length open-cells) 1)
 			do
 			(let ((cell (nth i open-cells)))
 				;(format t "    Evaluating cell: ~S~%" cell)
-				(setq heur (heuristic ant (nth 0 cell) (nth 1 cell)))
+				(defparameter heur (heuristic ant (nth 0 cell) (nth 1 cell)))
 				;(format t "    Cell ~S has heuristic ~D~%" cell heur)
 				(if (> heur best-heuristic)
 					(progn
@@ -333,7 +332,7 @@
 ;===============================;
 
 ;========== MAIN ==========;
-(loop while (< num-ants-found-goal 15000)
+(loop while (< num-ants-found-goal 1)
 	do
 		;(format t "========== Iteration ~D ==========~%" iterations)
 		(setq iterations (+ 1 iterations))
@@ -370,12 +369,12 @@
     (evaporate-scent)
     ;makes sure theres never more than 50 ants
     ; !!!!! CHANGE 3 TO 50 !!!!!!!
-	(if (< (list-length ants) 10) (spawn-ant))
+	(if (< (list-length ants) 50) (spawn-ant))
 	
 
 	; Just so we don't have an infinite loop
 	; !!!!! DELETE ME BEFORE SUBMIT!!!! VVV
-	(setq num-ants-found-goal (+ 1 num-ants-found-goal))
+	;(setq num-ants-found-goal (+ 1 num-ants-found-goal))
 )
 
 (get-shortest-path)
