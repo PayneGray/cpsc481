@@ -333,7 +333,7 @@
 ;===============================;
 
 ;========== MAIN ==========;
-(loop while (< num-ants-found-goal 500)
+(loop while (< num-ants-found-goal 5000)
 	do
 		;(format t "========== Iteration ~D ==========~%" iterations)
 		(setq iterations (+ 1 iterations))
@@ -370,7 +370,7 @@
     (evaporate-scent)
     ;makes sure theres never more than 50 ants
     ; !!!!! CHANGE 3 TO 50 !!!!!!!
-	(if (< (list-length ants) 50) (spawn-ant))
+	(if (< (list-length ants) 3) (spawn-ant))
 	
 
 	; Just so we don't have an infinite loop
