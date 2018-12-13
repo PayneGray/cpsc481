@@ -21,10 +21,10 @@
 ; All paths from start to goal
 (defvar all-paths (list))
 
-; The grid the ants will traverse
-; -1.0 means there is an obstacle on the cell
-; 0 means the cell is clear
-; Positive values mean there is pheromone on the cell
+; This is grid-d from the sample grids
+;   -1.0 means there is an obstacle on the cell
+;   0 means the cell is clear
+;   Positive values mean there is pheromone on the cell
 (defvar grid)
 (aref (setq grid (make-array '(40 60) 
                     :element-type 'single-float
