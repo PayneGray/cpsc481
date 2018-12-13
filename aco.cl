@@ -322,7 +322,8 @@
 	)
 )
 
-(defun get-shortest-path (all-paths)
+(defun get-shortest-path ()
+	"Returns the path from all-paths which is the shortest"
   (loop for i from 0 to (- (list-length all-paths) 1)
     do
     (if (not shortest-path)
@@ -352,8 +353,9 @@
 				(progn
 					(print "@@@ !FOUND FOOD! !PARTY! @@@")
 					(setq num-ants-found-goal (+ num-ants-found-goal 1))
-					; Update shortest path
-					; Change ant mode to 'returning'
+					(setq all-paths (append all-paths (list (nth 3 ant))))
+					; Ant switches to returning mode
+					(replace (nth i ants) (list t) :start1 1 :end1 2)
 				)
 			)
 
@@ -375,6 +377,9 @@
 	; !!!!! DELETE ME BEFORE SUBMIT!!!! VVV
 	(setq num-ants-found-goal (+ 1 num-ants-found-goal))
 )
+
+(get-shortest-path)
+(format t "Shortest path: ~S~%" shortest-path)
 
 (format t "Final ant check at iteration ~D~%" iterations)
 (loop for i from 0 to (- (list-length ants) 1)
