@@ -225,13 +225,13 @@
 )
 
 (defun drop-scent (ant)
-  "Drops a scent value of 10 at given ant's current cell location."
+  "Drops a scent value of 10 at given ant's cell location."
   (progn
     (setq x (car (nth 0 ant)))
-    (setq y (cdr (car (nth 0 ant))))
+    (setq y (car (cdr (nth 0 ant))))
     (setf (aref grid x y) (+ (aref grid x y) 10))
-    )
   )
+)
 
 (defun mode-direction (ant a b)
 	"If the ant is foraging, it prefers to move to the bottom right.
