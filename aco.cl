@@ -259,8 +259,8 @@
 	"Determines the heuristic value for the ant to move to the grid location at (a b).
 	 Heuristic is a non-negative float value. Higher values imply higher favorability"
 	 (setq fuzz (rand-fuzz))
-	 (setq heur (+ (mode-direction ant a b) (* (aref grid a b) 0.1) fuzz) )
-	 ;(setq heur (+ (* (aref grid a b) 0.1) fuzz) )
+	 ;(setq heur (+ (mode-direction ant a b) (* (aref grid a b) 0.1) fuzz) )
+	 (setq heur (+ (* (aref grid a b) 0.1) fuzz) )
 	 (return-from heuristic (float heur))
 )
 
@@ -333,7 +333,7 @@
 ;===============================;
 
 ;========== MAIN ==========;
-(loop while (< num-ants-found-goal 12000)
+(loop while (< num-ants-found-goal 15000)
 	do
 		;(format t "========== Iteration ~D ==========~%" iterations)
 		(setq iterations (+ 1 iterations))
@@ -370,7 +370,7 @@
     (evaporate-scent)
     ;makes sure theres never more than 50 ants
     ; !!!!! CHANGE 3 TO 50 !!!!!!!
-	(if (< (list-length ants) 3) (spawn-ant))
+	(if (< (list-length ants) 10) (spawn-ant))
 	
 
 	; Just so we don't have an infinite loop
@@ -385,7 +385,7 @@
 (loop for i from 0 to (- (list-length ants) 1)
 	do
 	(let ((ant (nth i ants)))
-		(format t "Ant ~D : ~S~%  ~S~%  ~S~%" i (car ant) (nth 2 ant) (nth 3 ant))
+		(format t "Ant ~D : ~S~%  ~S~%" i (car ant) (nth 2 ant))
 	)
 )
 ;==========================;
