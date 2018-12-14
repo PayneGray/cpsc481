@@ -1,0 +1,35 @@
+Course: CPSC 481-03, Artificial Intelligence
+Instructor: Charles Siska
+Session: Wednesdays 7:00pm
+
+Assignment: Ant Swarm Simulation
+Team name: WoW
+Team members: 
+ - Payne Lacsamana
+   rlacsamana@csu.fullerton.edu
+ - Chantalle Bril
+   cbril@csu.fullerton.edu
+ - Abdul Dergham
+   zyphur@csu.fullerton.edu
+ -Luis Rangel
+   luirangel@csu.fullerton.edu
+
+===== Program Specs =====
+Common Lisp
+
+Included files:
+aco.cl
+README.md
+
+To run this program:
+- Navigate to https://rextester.com/l/common_lisp_online_compiler
+- Copy contents of aco.cl
+- Paste contents into the box
+- Press on "Run it"
+
+Program description:
+This program generates up to 50 ants at once that will navigate through an obstacle or maze to find food. Once one ant finds food,
+he drops a scent trail on the way back home. When other ants come across the scent trail, they will no where to go. With each 
+iteration of the ants along the path, it will become more and more optimized until finally there's just a stream of ants in the best
+possible path, heading straight toward the food and back.
+External Requirements: None
