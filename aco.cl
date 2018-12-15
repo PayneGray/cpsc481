@@ -1,10 +1,7 @@
-;!!!! DELETE DEBUG CODE BEFORE SUBMIT !!!!!
 ; CPSC 481 - Artificial Intelligence
 ; Team: Chantalle Bril, Payne Lacsamana, Abdul Dergham, Luis Rangel
 
 ;========== GLOBAL VARIABLESS ==========;
-;Please declare global vars in here
-;Beware when using setq - you might be setting a global variable when a local variable is needed
 
 ; Our list of all ants
 (defvar ants (list))
@@ -12,19 +9,17 @@
 ; The number of ants that have found the goal
 (defvar num-ants-found-goal 0)
 
-; The shortest path to the goal
-(defvar shortest-path (list))
-
-; Number of iterations / moves until program reached the end
-(defvar iterations 0)
-
-; All paths from start to goal
+; All paths from the start to the goal
 (defvar all-paths (list))
 
+; The shortest path from the start to the goal
+(defvar shortest-path (list))
+
+(defvar iterations 0)
+
 ; This is grid-d from the sample grids
-;   -1.0 means there is an obstacle on the cell
-;   0 means the cell is clear
-;   Positive values mean there is pheromone on the cell
+;   x : -1.0
+;   - : 0.0
 (defvar grid)
 (aref (setq grid (make-array '(40 60) 
                     :element-type 'single-float
@@ -69,60 +64,50 @@
 ( 0.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 -1.0 0.0 0.0 -1.0 0.0 0.0 -1.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 -1.0 0.0 0.0)
 ( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 -1.0 0.0 0.0 -1.0 0.0 0.0))))
         1 2)
-;=======================================;
 
 ;========== FUNCTIONS ==========;
 
 (defun spawn-ant ()
-	; add documentation here
+	; Creates a new ant at the start position and adds it to the list of ants
 	(setq ants (append ants
 		(list (list (list 0 0) nil (list (list 0 0)) (list (list 0 0))))
-	)) 
-)
-
-;adds 20 to half the grid for testing
-(defun test ()
-	(loop for i from 0 to 19
-		do(loop for j from 0 to 59
-			do (if (= (aref grid i j) 0.0)
-				(setf (aref grid i j) (+ (aref grid i j) 20))
-				)
-		)
-	)
+	))
 )
 
 (defun migrate-scent (a b) 
-	;documentation here
-	"grabs 1% of the current gas"
+	" Takes 1% of the pheremone value of the cell at (a b) and distributes 1/5 of
+	  it to the 4 surrounding cells of (a b)"
+
 	(defparameter gas (float(/ (aref grid a b) 500)))
+	; Prevent floating point underflow by preventing numbers from getting too small
 	(if (< gas 0.01) (setq gas 0.0))
 
-	"checks to see if left cell exists and if it does the gas moves over if no wall exists"
 	(if (> (- a 1) -1) 
 		(if (> (aref grid (- a 1) b) -1) 
 			(setf (aref grid (- a 1) b) (+ (aref grid (- a 1) b) gas))))
 
-	"checks to see if right cell exists and if it does the gas moves over if no wall exists"
 	(if (< (+ a 1) 40) 
 		(if (> (aref grid (+ a 1) b) -1) 
 			(setf (aref grid (+ a 1) b) (+ (aref grid (+ a 1) b) gas))))
 
-	"checks to see if top cell exists and if it does the gas moves over if no wall exists"
-	(if (> (- b 1) -1) (if (> (aref grid a (- b 1)) -1) (setf (aref grid a (- b 1)) (+ (aref grid a (- b 1)) gas))))
+	(if (> (- b 1) -1) 
+		(if (> (aref grid a (- b 1)) -1) 
+			(setf (aref grid a (- b 1)) (+ (aref grid a (- b 1)) gas))))
 
-	"checks to see if bottom cell exists and if it does the gas moves over if no wall exists"
-	(if (< (+ b 1) 60) (if (> (aref grid a (+ b 1)) -1) (setf (aref grid a (+ b 1)) (+ (aref grid a (+ b 1)) gas))))
+	(if (< (+ b 1) 60) 
+		(if (> (aref grid a (+ b 1)) -1) 
+			(setf (aref grid a (+ b 1)) (+ (aref grid a (+ b 1)) gas))))
 )
 
 (defun evaporate-scent ()
-	; add documentation here
+	" The pheremone value of each cell on the board decreases by 1% "
 	(loop for i from 0 to 39
 		do(loop for j from 0 to 59
 			do (if (> (aref grid i j) 0.0)
 				(progn
 					(migrate-scent i j)
-					;maybe make to 0 if it's less than 1
 					(setf (aref grid i j) (- (aref grid i j) (* (aref grid i j) 0.01)))
+					; Prevent floating point underflow by preventing numbers from getting too small
 					(if (< (aref grid i j) 0.01)
 						(setf (aref grid i j) 0.0)
 					)
@@ -132,13 +117,9 @@
 	)
 )
 
-; (setq test-ant (list (list 0 1) nil (list (list 0 0) (list 0 1)) (list (list 0 0) (list 0 1))))
-
-; (setq test-ant2 (list (list 0 1) nil (list (list 0 1) ) (list (list 0 0) (list 0 1))))
-
 (defun is-in (elem arr)
-	; if element is in array, return 1
-	; else, return nil
+	" If the given element is in the given array, return 1
+	  Otherwise, return nil"
 	(defparameter true nil)
 	(loop for i in arr
 		do (if (and (= (nth 0 elem) (nth 0 i)) (= (nth 1 elem) (nth 1 i)))
@@ -149,34 +130,36 @@
 )
 
 (defun open-list (ant)
-	"add documentation here"
+	"Returns a list of cell positions that the ant may move to from its current position.
+	 The ant may not move into a cell that is off the grid, not a cell that contains an obstacle,
+	 nor a cell that is in its tabu list."
 	(defparameter arr (list))
 	(defparameter row (nth 0 (nth 0 ant)))
 	(defparameter col (nth 1 (nth 0 ant)))
 	(defparameter tabu (nth 2 ant))
 
-	(if (< (+ row 1) 40.0) ;row is less than 40, can move down
+	(if (< (+ row 1) 40.0)
 		(if (/= -1.0 (aref grid (+ row 1) col))
 			(if (not (is-in (list (+ row 1) col) tabu))
 				(setf arr (append arr (list (list (+ row 1) col)))) 
 			)
 		)
 	)
-	(if (> (- row 1) -1.0) ;row is more than 0, can move up
+	(if (> (- row 1) -1.0)
 		(if (/= -1.0 (aref grid (- row 1) col))
 			(if (not (is-in (list (- row 1) col) tabu))
 				(setf arr (append arr (list (list (- row 1) col)))) 
 			)
 		)
 	)
-	(if (< (+ col 1) 60.0) ;col is less than 60, can move right
+	(if (< (+ col 1) 60.0)
 		(if (/= -1.0 (aref grid row (+ col 1)))
 			(if (not (is-in (list row (+ col 1)) tabu))
 				(setf arr (append arr (list (list row (+ col 1))))) 
 			)
 		)
 	)
-	(if (> (- col 1) -1.0) ; col is more than 0, can move left
+	(if (> (- col 1) -1.0)
 		(if (/= -1.0 (aref grid row (- col 1)))
 			(if (not (is-in (list row (- col 1)) tabu))
 				(setf arr (append arr (list (list row (- col 1))))) 
@@ -210,14 +193,14 @@
 )
 
 (defun without-last(l)
-	"Return list without last element"
+	"Return list without its last element"
     (reverse (cdr (reverse l)))
 )
 
 (defun trim-tabu (ant-index)
-	"Make sure the tabu list is not longer than 8 cells long"
+	"Make sure the tabu list is not longer than 8 cells long. Remove the last element in the tabu "
 	(let ((tabu (nth 2 (nth ant-index ants))))
-		(if (> (list-length tabu) 7)
+		(if (> (list-length tabu) 8)
 			(progn
 				(defparameter new-tabu (without-last tabu))
 				(replace (nth ant-index ants) (list new-tabu) :start1 2 :end1 3)
@@ -227,7 +210,7 @@
 )
 
 (defun drop-scent (ant)
-  "Drops a scent value of 10 at given ant's cell location."
+  "Drops a scent value of 10 at given ant's current cell location."
   (progn
     (defparameter x (car (nth 0 ant)))
     (defparameter y (car (cdr (nth 0 ant))))
@@ -236,17 +219,13 @@
 )
 
 (defun mode-direction (ant a b)
-	"If the ant is foraging, it prefers to move to the bottom right.
-	 If the ant is returning, it prefers to move to the top left.
-	 Returns the sum difference between the coordinates of the ant and the grid location coordinates.
-	 When foraging, ant prefers a positive difference.
-	 When returning, ant prefers a negative difference."
+	 " Returns the sum difference between the coordinates of the ant and the grid location coordinates.
+	   When foraging, ant prefers a positive difference.
+	   When returning, ant prefers a negative difference."
 	 (let ( (x (car (car ant))) (y (car(cdr (car ant)))) )
 	 	(defparameter diff (+ (- a x) (- b y)))
 	 	(if (nth 1 ant)
-	 		; If ant is returning, return inverse of diff
 	 		(return-from mode-direction (float (* -1 diff)))
-	 		; If ant is foraging, just return diff
 	 		(return-from mode-direction (float diff))
 	 	)
 	 )
@@ -254,52 +233,48 @@
 
 (defun rand-fuzz ()
 	"Returns a random number between -.8 and .8"
-	(return-from rand-fuzz (float (/ (- (random 161) 80) 100.0)))
+	(return-from rand-fuzz (float (/ (- (random 161 (make-random-state t)) 80) 100.0)))
 )
 
 (defun heuristic (ant a b)
-	"Determines the heuristic value for the ant to move to the grid location at (a b).
-	 Heuristic is a non-negative float value. Higher values imply higher favorability"
+	" Determines the heuristic value for the ant to move to the grid location at (a b).
+	  Heuristic is a non-negative float value. Higher values imply higher favorability"
 	 (defparameter fuzz (rand-fuzz))
-	 (defparameter heur (+ (mode-direction ant a b) (* (aref grid a b) 0.1) fuzz) )
+	 ; If the ant is returning, it does not care about pheremones
+	 (if (nth 1 ant)
+	 	(defparameter heur (+ (mode-direction ant a b) fuzz))
+	 	(defparameter heur (+ (mode-direction ant a b) (* (aref grid a b) 0.1) fuzz))
+	 )
+	 ;(defparameter heur (+ (mode-direction ant a b) (* (aref grid a b) 0.1) fuzz) )
 	 ;(defparameter heur (+ (* (aref grid a b) 0.1) fuzz) )
 	 (return-from heuristic (float heur))
 )
 
 (defun move (ant-index)
-	"Moves the ant to the best cell possible"
+	"Moves the ant to the heuristically best cell. Drops pheremone if it is returning"
 	(let ((ant (nth ant-index ants)))
-		;(format t "  Moving ant ~D :~S~%" ant-index ant)
 
-		;===== Drop scent if returning
+		; Drop scent if returning
 		(if (nth 1 ant)
 			(drop-scent ant)
-			;(format t "  ant is foraging!~%")
 		)
 
-		;===== Get the open list
+		; Get all the possible cells the ant can move to
 		(defparameter open-cells (open-list ant))
-
-		;===== If open list is empty, clear tabu and do it again
 		(if (not open-cells)
 			(progn 
 				(clear-tabu ant-index)
 				(setq open-cells (open-list ant))
-				;(format t "  !!! Cleared the tabu list !!!")
 			)
 		)
 
-		;(format t "  Open list: ~S~%" open-cells)
-
-		;===== Call the heuristic on each cell
+		; Call the heuristic on each cell and select the cell with the highest heuristic
 		(defparameter best-cell (car open-cells))
 		(defparameter best-heuristic 0)
 		(loop for i from 0 to (- (list-length open-cells) 1)
 			do
 			(let ((cell (nth i open-cells)))
-				;(format t "    Evaluating cell: ~S~%" cell)
 				(defparameter heur (heuristic ant (nth 0 cell) (nth 1 cell)))
-				;(format t "    Cell ~S has heuristic ~D~%" cell heur)
 				(if (> heur best-heuristic)
 					(progn
 						(setq best-cell cell)
@@ -308,18 +283,16 @@
 				)
 			)
 		)
-		;(format t "  Moving to best cell: ~S~%" best-cell)
+		; Update the ant's information
 		(replace (nth ant-index ants) (list best-cell) :start1 0 :end1 1)
-		;===== Add to tabu
 		(replace (nth ant-index ants) (list (push best-cell (nth 2 ant))) :start1 2 :end1 3)
 		(trim-tabu ant-index)
-		;===== Add to closed
 		(replace (nth ant-index ants) (list (append (nth 3 ant) (list best-cell))) :start1 3 :end1 4)
 	)
 )
 
 (defun get-shortest-path ()
-	"Returns the path from all-paths which is the shortest"
+	" Returns the path from all-paths which has the shortest length"
   (loop for i from 0 to (- (list-length all-paths) 1)
     do
     (if (not shortest-path)
@@ -331,12 +304,10 @@
   )
 )
 
-;===============================;
 
 ;========== MAIN ==========;
 (loop while (< num-ants-found-goal 30)
 	do
-		;(format t "========== Iteration ~D ==========~%" iterations)
 		(setq iterations (+ 1 iterations))
 
 	(loop for i from 0 to (- (list-length ants) 1)
@@ -344,24 +315,21 @@
 		( let ( (ant (nth i ants)) )
 			(if ant
 			(progn
-				;(format t "~%----- Ant ~D -----~%~S~%" i (car ant))
 				(move i)
 
-				; If ant is foraging and found the goal
 				(if (and (at-goal ant) (not (nth 1 ant)))
 					(progn
 						(format t "@@@ !FOUND FOOD! !PARTY! @@@~%")
 						(setq num-ants-found-goal (+ num-ants-found-goal 1))
 						(setq all-paths (append all-paths (list (nth 3 ant))))
-						; Ant switches to returning mode
+						; The ant changes to "returning" mode
 						(replace (nth i ants) (list t) :start1 1 :end1 2)
 					)
 				)
 
-				; If ant is returning and found the start
 				(if (and (at-start ant) (nth 1 ant))
 					(progn
-						(format t "!!! This ant is at the colony !!!~%")
+						(format t "!!! ANT RETURNED TO COLONY !!!~%")
 						(replace ants (list nil) :start1 i :end1 (+ i 1))
 					)
 				)
@@ -369,24 +337,25 @@
 		)
 	)
     (evaporate-scent)
-    ;makes sure theres never more than 50 ants
 	(if (< (list-length ants) 50) (spawn-ant))
 	
+	;(setq num-ants-found-goal (+ 1 num-ants-found-goal))
+)
 
-	; Just so we don't have an infinite loop
-	; !!!!! DELETE ME BEFORE SUBMIT!!!! VVV
-	(setq num-ants-found-goal (+ 1 num-ants-found-goal))
+(format t "===== ~D ants found the goal =====~%")
+(loop for i from 0 to (- (list-length all-paths) 1)
+	do
+	(format t "   Path ~D : Length ~D~%" i (list-length (nth i all-paths)))
 )
 
 (get-shortest-path)
-(format t "Shortest path: ~S~%" shortest-path)
+(format t "===== Shortest path from start to goal =====~%   Length: ~D~%   ~S~%" (list-length shortest-path) shortest-path)
 
-(format t "Final ant check at iteration ~D~%" iterations)
-(loop for i from 0 to (- (list-length ants) 1)
-	do
-	(let ((ant (nth i ants)))
-		(format t "Ant ~D : ~S~%  ~S~%" i (car ant) (nth 2 ant))
-	)
-)
-;==========================;
+; (format t "Final ant check at iteration ~D~%" iterations)
+; (loop for i from 0 to (- (list-length ants) 1)
+; 	do
+; 	(let ((ant (nth i ants)))
+; 		(format t "Ant ~D : ~S~%  ~S~%" i (car ant) (nth 2 ant))
+; 	)
+; )
 
