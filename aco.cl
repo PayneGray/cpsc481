@@ -319,9 +319,8 @@
 
 				(if (and (at-goal ant) (not (nth 1 ant)))
 					(progn
-						(format t "@@@ !FOUND FOOD! !PARTY! @@@~%")
 						(setq num-ants-found-goal (+ num-ants-found-goal 1))
-						(setq all-paths (append all-paths (list (nth 3 ant))))
+						(setq all-paths (push (nth 3 ant) all-paths))
 						; The ant changes to "returning" mode
 						(replace (nth i ants) (list t) :start1 1 :end1 2)
 					)
@@ -329,7 +328,6 @@
 
 				(if (and (at-start ant) (nth 1 ant))
 					(progn
-						(format t "!!! ANT RETURNED TO COLONY !!!~%")
 						(replace ants (list nil) :start1 i :end1 (+ i 1))
 					)
 				)
@@ -337,12 +335,10 @@
 		)
 	)
     (evaporate-scent)
-	(if (< (list-length ants) 50) (spawn-ant))
-	
-	;(setq num-ants-found-goal (+ 1 num-ants-found-goal))
+	(if (and (= (mod iterations 10) 0) (< (list-length ants) 50)) (spawn-ant))
 )
 
-(format t "===== ~D ants found the goal =====~%")
+(format t "===== ~D ants found the goal =====~%" num-ants-found-goal)
 (loop for i from 0 to (- (list-length all-paths) 1)
 	do
 	(format t "   Path ~D : Length ~D~%" i (list-length (nth i all-paths)))
@@ -351,11 +347,4 @@
 (get-shortest-path)
 (format t "===== Shortest path from start to goal =====~%   Length: ~D~%   ~S~%" (list-length shortest-path) shortest-path)
 
-; (format t "Final ant check at iteration ~D~%" iterations)
-; (loop for i from 0 to (- (list-length ants) 1)
-; 	do
-; 	(let ((ant (nth i ants)))
-; 		(format t "Ant ~D : ~S~%  ~S~%" i (car ant) (nth 2 ant))
-; 	)
-; )
 
